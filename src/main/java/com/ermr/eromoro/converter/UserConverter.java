@@ -8,19 +8,19 @@ import java.time.LocalDateTime;
 
 public class UserConverter {
 
-    public static UserResponseDTO.SignUpResultDTO toSignUpResultDTO (User user) {
-        return UserResponseDTO.SignUpResultDTO.builder()
-                .userId(user.getId())
-                .createdAt(LocalDateTime.now())
-                .build();
-    }
-
     public static User toUser(UserRequestDTO.SignupDto request) {
 
         return User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(request.getPassword())
+                .build();
+    }
+
+    public static UserResponseDTO.SignUpResultDTO toSignUpResultDTO (User user) {
+        return UserResponseDTO.SignUpResultDTO.builder()
+                .userId(user.getId())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 
