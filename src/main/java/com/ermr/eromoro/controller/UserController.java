@@ -20,7 +20,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ApiResponse<UserResponseDTO.SignUpResultDTO> signUp(@RequestBody UserRequestDTO.SignupDto request) {
+    public ApiResponse<UserResponseDTO.SignUpResultDTO> signUp(
+            @RequestBody UserRequestDTO.SignupDto request
+    ) {
         User user = userService.signUp(request);
         return ApiResponse.onSuccess(UserConverter.toSignUpResultDTO(user));
     }
