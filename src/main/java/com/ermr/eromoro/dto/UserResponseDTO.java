@@ -14,8 +14,7 @@ public class UserResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SignUpResultDTO {
-        Long userId;
-        LocalDateTime createdAt;
+        String nickname;
     }
 
     @Builder
