@@ -35,4 +35,17 @@ public class UserController {
                 UserConverter.toSignUpResultDTO(user)
         );
     }
+
+    @Operation(summary = "로그인 [v1.0 (2025-10-05)]", description =
+            "# [v1.0 (2025-10-05)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=24b5335b207281ddb5c3c3811c6c125d&pm=s)" +
+                    " 로그인 API 입니다. 아이디와 패스워드를 body에 입력해주세요."
+    )
+    @PostMapping("/signin")
+    public ApiResponse<UserResponseDTO.SignInResultDTO> signIn(
+            @RequestBody @Valid UserRequestDTO.SignInDto request
+    ) {
+        return ApiResponse.onSuccess(
+                userCommandService.signIn(request)
+        );
+    }
 }

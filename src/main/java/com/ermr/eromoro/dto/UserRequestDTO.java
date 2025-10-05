@@ -17,4 +17,12 @@ public class UserRequestDTO {
         String password;
         UserType userType;
     }
+
+    @Getter
+    public static class SignInDto {
+        @NotBlank(message = "아이디는 빈값일 수 없습니다.")
+        String username;
+        @NotBlank(message = "비밀번호는 빈값일 수 없습니다.")
+        String password;
+    }
 }
