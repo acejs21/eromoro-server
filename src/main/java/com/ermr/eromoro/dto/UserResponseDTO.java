@@ -21,6 +21,16 @@ public class UserResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class SignInResultDTO {
+        Long userId;
+        String accessToken;
+        String refreshToken;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class SignUpExceptionDTO {
         Integer flag;
     }
