@@ -12,16 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
 
+    @Override
     @Transactional
-    public User signUp(UserRequestDTO.SignupDto request) {
+    public User signUp(UserRequestDTO.SignUpDto request) {
         User newUser = UserConverter.toUser(request);
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new UserHandler(ErrorStatus.SIGNUP_ALREADY_EXISTING_EMAIL);
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new UserHandler(ErrorStatus.SIGNUP_ALREADY_EXISTING_ACCOUNT);
         }
 
         return userRepository.save(newUser);
