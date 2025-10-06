@@ -7,6 +7,7 @@ import com.ermr.eromoro.domain.User;
 import com.ermr.eromoro.dto.UserRequestDTO;
 import com.ermr.eromoro.dto.UserResponseDTO;
 import com.ermr.eromoro.jwt.JwtTokenProvider;
+import com.ermr.eromoro.jwt.SecurityUtil;
 import com.ermr.eromoro.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,6 +64,40 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         return UserConverter.toSignInResultDTO(getUser, accessToken, refreshToken);
     }
+
+    @Override
+    public void logout(String accessToken) {
+        // 로그아웃시킬 회원의 refresh token redis에서 삭제
+        Long userId = SecurityUtil.getCurrentUserId();
+        String key = "users:" + userId.toString();
+        redisTemplate.delete(key);
+
+        // 로그아웃시킬 회원의 access token redis의 블랙리스트로 저장, 인가 처리시 블랙리스트 확인을 통해 로그아웃된 회원인지 확인함.
+        key = "blackList:" + userId.toString();
+        long tokenRemainTimeSecond = jwtTokenProvider.tokenRemainTimeSecond(accessToken);
+        redisTemplate.opsForValue().set(key, accessToken, tokenRemainTimeSecond, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public UserResponseDTO.RefreshAccessTokenResultDTO refreshAccessToken(String refreshToken) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        String key = "users:" + userId.toString();
+        String accessToken;
+        String newRefreshToken;
+        // 전달된 refresh token과 redis의 refresh token비교
+        String getRefreshTokenFromRedis = redisTemplate.opsForValue().get(key);
+
+        if (refreshToken.equals(getRefreshTokenFromRedis)) {
+            accessToken = generateAccessToken(userId, accessExpTime);
+            newRefreshToken = generateAndSaveRefreshToken(key, refreshExpTime);
+        } else {
+            throw new UserHandler(ErrorStatus.REFRESH_TOKEN_NOT_EQUAL);
+        }
+
+        return UserConverter.RefreshAccessTokenResultDTO(userId, accessToken, newRefreshToken);
+    }
+
+
 
     @Override
     public String generateAccessToken(Long userId, int accessExpTime) {

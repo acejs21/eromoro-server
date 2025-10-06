@@ -8,6 +8,8 @@ public interface UserCommandService {
 
     User signUp(UserRequestDTO.SignUpDto request);
     UserResponseDTO.SignInResultDTO signIn(UserRequestDTO.SignInDto request);
+    void logout(String accessToken);
+    UserResponseDTO.RefreshAccessTokenResultDTO refreshAccessToken(String refreshToken);
     String generateAccessToken(Long userId, int accessExpTime);
     String generateAndSaveRefreshToken(String key, int refreshExpTime);
 }

@@ -34,4 +34,14 @@ public class UserResponseDTO {
     public static class SignUpExceptionDTO {
         Integer flag;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RefreshAccessTokenResultDTO {
+        Long userId;
+        String accessToken;
+        String refreshToken;
+    }
 }

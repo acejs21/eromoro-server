@@ -31,6 +31,14 @@ public class UserConverter {
                 .build();
     }
 
+    public static UserResponseDTO.RefreshAccessTokenResultDTO RefreshAccessTokenResultDTO(Long userId, String accessToken, String refreshToken) {
+        return UserResponseDTO.RefreshAccessTokenResultDTO.builder()
+                .userId(userId)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
     public static UserResponseDTO.SignUpExceptionDTO toSignUpExceptionDTO (Integer flag) {
         return UserResponseDTO.SignUpExceptionDTO.builder()
                 .flag(flag)
