@@ -1,5 +1,7 @@
 package com.ermr.eromoro.config;
 
+import com.ermr.eromoro.jwt.JwtAuthenticationEntryPoint;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -16,7 +18,10 @@ import java.util.Arrays;
 
 @EnableWebSecurity
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -30,7 +35,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 Stateless로 설정
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/**").permitAll());
+                        .requestMatchers("/**").permitAll())
+                .exceptionHandling(
+                        exception -> exception
+                                .authenticationEntryPoint(jwtAuthenticationEntryPoint) // JWT 인증 실패 시 처리
+                );
         return http.build();
     }
 
