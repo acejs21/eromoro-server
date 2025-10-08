@@ -5,41 +5,63 @@ import com.ermr.eromoro.converter.FeedbackConverter;
 import com.ermr.eromoro.domain.Feedback;
 import com.ermr.eromoro.dto.FeedbackRequestDto;
 import com.ermr.eromoro.dto.FeedbackResponseDto;
-import com.ermr.eromoro.service.FeedbackService;
+import com.ermr.eromoro.jwt.SecurityUtil;
+import com.ermr.eromoro.service.FeedbackCommandService;
+import com.ermr.eromoro.service.FeedbackCommandServiceImpl;
+import com.ermr.eromoro.service.FeedbackQueryService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/feedback")
+@RequestMapping("/feedbacks")
 public class FeedbackController {
 
-    private final FeedbackService feedbackService;
+    private final FeedbackCommandService feedbackCommandService;
+    private final FeedbackQueryService feedbackQueryService;
 
-    @PostMapping
+    @Operation(summary = "피드백 작성 [v1.0 (2025-10-06)]", description =
+            "# [v1.0 (2025-10-06)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=2645335b2072803fb0a6f0b850e9185f&pm=s)" +
+                    " 피드백 작성 API 입니다."
+    )
+    @PostMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ApiResponse<FeedbackResponseDto.CreateResultDto> create(
-            @RequestBody FeedbackRequestDto.CreateDto request
+            @RequestPart(value = "request") FeedbackRequestDto.CreateDto request,
+            @RequestPart(value = "photo", required = false) MultipartFile image
     ){
-        Feedback feedback = feedbackService.create(request);
+        Long userId = SecurityUtil.getCurrentUserId();
+        Feedback feedback = feedbackCommandService.create(request, userId);
         return ApiResponse.onSuccess(FeedbackConverter.toCreateResultDTO(feedback));
     }
 
+    @Operation(summary = "특정 피드백 상세 조회 [v1.0 (2025-10-06)]", description =
+            "# [v1.0 (2025-10-06)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=2645335b207280538e15ca37f7d82599&pm=s)" +
+                    " 특정 피드백 상세 조회 API 입니다."
+    )
     @GetMapping("/{feedback_id}")
     public ApiResponse<FeedbackResponseDto.DetailResultDto> getDetail(
             @PathVariable("feedback_id") Long feedbackId
     ) {
-        Feedback feedback = feedbackService.findById(feedbackId);
+        Feedback feedback = feedbackQueryService.findById(feedbackId);
         return ApiResponse.onSuccess(FeedbackConverter.toDetailResultDto(feedback));
     }
 
+    @Operation(summary = "내 피드백 목록 조회 [v1.0 (2025-10-08)]", description =
+            "# [v1.0 (2025-10-08)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=2755335b207280448464edc18316ac25&pm=s)" +
+                    " 내 피드백 목록 조회 API 입니다."
+    )
     @GetMapping("/my")
     public ApiResponse<FeedbackResponseDto.MyFeedbacksResultDto> getMyFeedbacks() {
-        // 임시 하드 코드 값 사용
-        Long userId = 1L;
-        List<Feedback> feedbacks = feedbackService.getMyFeedbacks(userId);
+        Long userId = SecurityUtil.getCurrentUserId();
+        List<Feedback> feedbacks = feedbackQueryService.getMyFeedbacks(userId);
         return ApiResponse.onSuccess(FeedbackConverter.toMyFeedbacksResultDto(feedbacks));
     }
 
@@ -48,15 +70,19 @@ public class FeedbackController {
             @PathVariable("feedback_id") Long feedbackId,
             @RequestBody FeedbackRequestDto.UpdateDto request
     ) {
-        Feedback updated = feedbackService.update(feedbackId, request);
+        Feedback updated = feedbackCommandService.update(feedbackId, request);
         return ApiResponse.onSuccess(FeedbackConverter.toDetailResultDto(updated));
     }
 
+    @Operation(summary = "피드백 삭제 [v1.0 (2025-10-08)]", description =
+            "# [v1.0 (2025-10-08)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=2645335b207280eaab5bcbb2ef096293&pm=s)" +
+                    " 피드백 삭제 API 입니다."
+    )
     @DeleteMapping("/{feedback_id}")
     public ApiResponse<LocalDateTime> deleteFeedback(
             @PathVariable("feedback_id") Long feedbackId
     ) {
-        LocalDateTime deletedAt = feedbackService.delete(feedbackId);
+        LocalDateTime deletedAt = feedbackCommandService.delete(feedbackId);
         return ApiResponse.onSuccess(deletedAt);
     }
 

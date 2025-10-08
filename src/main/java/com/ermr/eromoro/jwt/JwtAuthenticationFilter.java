@@ -57,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String refreshToken = request.getHeader("refreshToken");
 
         // 특정 경로(토큰 갱신 api)에서만 Refresh Token 처리
-        if ("/api/v1/users/refresh".equals(requestUri)) {
+        if ("/users/refresh/access-token".equals(requestUri)) {
             if (refreshToken != null) {
                 try {
                     // access token 검증
@@ -73,6 +73,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     Gson gson = new Gson();
                     String json = "";
                     if (e instanceof CustomJwtException) {
+//                        if(((CustomJwtException) e).getCode().equals("AUTHORIZATION4002")) { // Accesstoken 갱신시 Accesstoken 만료됐을 때 이렇게 처리하는게 좋아보임. (2025/10/06)
+//                            System.out.println("Access Token Expired");
+//                            return; // Access Token이 만료된 상황
+//                        }
                         request.setAttribute("exceptionCode", ((CustomJwtException) e).getCode());
                         request.setAttribute("exceptionMessage", e.getMessage());
                         request.setAttribute("exceptionHttpStatus", ((CustomJwtException) e).getHttpStatus());
