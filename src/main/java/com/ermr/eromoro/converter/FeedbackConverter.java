@@ -14,11 +14,13 @@ public class FeedbackConverter {
         return Feedback.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .photo(request.getPhoto())
+//                .photoUrl() <- Object Storage 연동 후 처리
                 .type(request.getType())
-                .isReport(request.isReport())
+                .isReport(request.getIsReport())
+                .accepted(false) // 기본값 false
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
+                .address(request.getAddress())
                 .likeCount(0)
                 .dislikeCount(0)
                 .build();
@@ -33,18 +35,18 @@ public class FeedbackConverter {
     public static FeedbackResponseDto.DetailResultDto toDetailResultDto(Feedback feedback) {
         return FeedbackResponseDto.DetailResultDto.builder()
                 .feedbackId(feedback.getId())
-                .userId(feedback.getUserId())
-                .emdAreaId(feedback.getEmdAreaId())
+//                .emdAreaId(feedback.getEmdAreaId())      // 수정(2025/10/06
                 .title(feedback.getTitle())
                 .content(feedback.getContent())
+                .photoUrl(feedback.getPhotoUrl())
                 .type(feedback.getType())
-                .isReport(feedback.isReport())
+                .isReport(feedback.getIsReport())
                 .latitude(feedback.getLatitude())
                 .longitude(feedback.getLongitude())
+                .address(feedback.getAddress())
                 .likeCount(feedback.getLikeCount())
                 .dislikeCount(feedback.getDislikeCount())
                 .createdAt(feedback.getCreatedAt())
-                .updatedAt(feedback.getUpdatedAt())
                 .build();
     }
 
@@ -52,19 +54,22 @@ public class FeedbackConverter {
         List<FeedbackResponseDto.MyFeedbacksResultDto.MyFeedbackDto> feedbackDtos = feedbacks.stream()
                 .map(f -> FeedbackResponseDto.MyFeedbacksResultDto.MyFeedbackDto.builder()
                         .feedbackId(f.getId())
-                        .isReport(f.isReport())
-                        .emdAreaId(f.getEmdAreaId())
+                        .photoUrl(f.getPhotoUrl())
+//                        .emdAreaId(f.getEmdAreaId())
                         .title(f.getTitle())
+                        .address(f.getAddress())
                         .type(f.getType())
-                        .updatedAt(f.getUpdatedAt())
+                        .createdAt(f.getCreatedAt())
                         .likeCount(f.getLikeCount())
                         .dislikeCount(f.getDislikeCount())
+                        .isReport(f.getIsReport())
+                        .accepted(f.getAccepted())
                         .build())
                 .collect(Collectors.toList());
 
         return FeedbackResponseDto.MyFeedbacksResultDto.builder()
                 .feedbacks(feedbackDtos)
-                .totalCount(feedbackDtos.size())
+//                .totalCount(feedbackDtos.size())
                 .build();
     }
 }

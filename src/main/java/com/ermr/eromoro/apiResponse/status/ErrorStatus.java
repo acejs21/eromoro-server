@@ -16,11 +16,22 @@ public enum ErrorStatus implements BaseErrorCode {
     _UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON401","인증이 필요합니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
-    // 회원가입 (signUp) 관련 에러
-    SIGNUP_ALREADY_EXISTING_EMAIL(HttpStatus.BAD_REQUEST, "SIGNUP4001", "이미 존재하는 이메일입니다."),
+    // User 관련 에러
+    USER_ALREADY_EXISTING_ACCOUNT(HttpStatus.BAD_REQUEST, "USER4001", "이미 존재하는 계정입니다."),
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4002", "해당 아이디를 가진 유저가 존재하지 않습니다."),
+    USER_PASSWORD_NOT_MATCHED(HttpStatus.BAD_REQUEST, "USER4003", "비밀번호가 일치하지 않습니다."),
 
-    // 피드백 (feedback) 관련 에러
-    FEEDBACK_NOT_FOUND(HttpStatus.BAD_REQUEST, "FEEDBACK4001", "피드백을 찾을 수 없습니다.");
+    // Feedback 관련 에러
+    FEEDBACK_NOT_FOUND(HttpStatus.BAD_REQUEST, "FEEDBACK4001", "피드백을 찾을 수 없습니다."),
+
+    // 인가 관련 에러
+    AUTHORIZATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4001", "인증에 실패하였습니다."),
+    JWT_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4002", "AccessToken이 만료되었습니다."),
+    JWT_REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4003", "RefreshToken이 만료되었습니다."),
+    LOGOUT_USER(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4004", "로그아웃된 유저입니다."),
+    JWT_TOKEN_NOT_RECEIVED(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4005", "JWT 토큰이 전달되지 않았습니다."),
+    JWT_TOKEN_OUT_OF_FORM(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4006", "JWT 토큰의 형식이 올바르지 않습니다."),
+    REFRESH_TOKEN_NOT_EQUAL(HttpStatus.BAD_REQUEST, "AUTHORIZATION4007", "RefreshToken이 일치하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
