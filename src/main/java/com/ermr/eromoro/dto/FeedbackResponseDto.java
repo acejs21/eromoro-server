@@ -1,6 +1,7 @@
 package com.ermr.eromoro.dto;
 
 import com.ermr.eromoro.domain.Feedback;
+import com.ermr.eromoro.domain.enums.FeedbackType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,18 +27,18 @@ public class FeedbackResponseDto {
     @AllArgsConstructor
     public static class DetailResultDto {
         Long feedbackId;
-        Long userId;
-        Long emdAreaId;
+//        Long emdAreaId;
         String title;
         String content;
-        Feedback.FeedbackType type;
-        boolean isReport;
+        String photoUrl;
+        FeedbackType type;
+        Boolean isReport;
         BigDecimal latitude;
         BigDecimal longitude;
+        String address;
         int likeCount;
         int dislikeCount;
         LocalDateTime createdAt;
-        LocalDateTime updatedAt;
     }
 
     @Builder
@@ -46,7 +47,7 @@ public class FeedbackResponseDto {
     @AllArgsConstructor
     public static class MyFeedbacksResultDto {
         List<MyFeedbackDto> feedbacks;
-        int totalCount;
+//        int totalCount;
 
         @Builder
         @Getter
@@ -54,13 +55,16 @@ public class FeedbackResponseDto {
         @AllArgsConstructor
         public static class MyFeedbackDto {
             Long feedbackId;
-            boolean isReport;
-            Long emdAreaId;
+//            Long emdAreaId;
+            String photoUrl;
             String title;
-            Feedback.FeedbackType type;
-            LocalDateTime updatedAt;
+            String address;
+            FeedbackType type;
+            LocalDateTime createdAt;
             int likeCount;
             int dislikeCount;
+            Boolean isReport;
+            Boolean accepted;
         }
     }
 }
