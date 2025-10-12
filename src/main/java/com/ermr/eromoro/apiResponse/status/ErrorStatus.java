@@ -20,7 +20,10 @@ public enum ErrorStatus implements BaseErrorCode {
     SIGNUP_ALREADY_EXISTING_EMAIL(HttpStatus.BAD_REQUEST, "SIGNUP4001", "이미 존재하는 이메일입니다."),
 
     // 피드백 (feedback) 관련 에러
-    FEEDBACK_NOT_FOUND(HttpStatus.BAD_REQUEST, "FEEDBACK4001", "피드백을 찾을 수 없습니다.");
+    FEEDBACK_NOT_FOUND(HttpStatus.BAD_REQUEST, "FEEDBACK4001", "피드백을 찾을 수 없습니다."),
+
+    // 코스 (course) 관련 에러
+    COURSE_NOT_FOUND(HttpStatus.BAD_REQUEST, "COURSE4001", "코스를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
