@@ -1,0 +1,10 @@
+osrm:
+  base-url: http://223.130.134.116:5000  # OSRM 라우터 주소
+  profile: foot                          # foot(보행) 프로파일 사용을 권장
+  alternatives: 3                        # 기본 대안 경로 개수
+course:
+  max-candidates: 24                     # 시도할 via 후보 수 (방위각 15° 간격)
+  max-results: 5                         # 응답으로 줄 코스 개수
+  accept-duration-diff-ratio: 0.20       # 목표 시간 대비 ±20% 허용
+  min-detour-radius-m: 250               # 최소 우회 반경
+  max-detour-radius-m: 4000              # 최대 우회 반경(도심/공원 상황 맞게 조정)
