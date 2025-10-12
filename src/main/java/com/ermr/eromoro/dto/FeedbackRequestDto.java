@@ -1,6 +1,6 @@
 package com.ermr.eromoro.dto;
 
-import com.ermr.eromoro.domain.Feedback;
+import com.ermr.eromoro.domain.enums.FeedbackType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
@@ -14,11 +14,10 @@ public class FeedbackRequestDto {
         BigDecimal longitude;
         String title;
         String content;
-        Feedback.FeedbackType type;
-
+        FeedbackType type;
+        String address;
         @JsonProperty("isReport")
-        boolean isReport;
-        String photo;
+        Boolean isReport;
     }
 
     @Getter
@@ -27,9 +26,8 @@ public class FeedbackRequestDto {
         BigDecimal longitude;
         String title;
         String content;
-        Feedback.FeedbackType type;
-
+        FeedbackType type;
         @JsonProperty("isReport")
-        boolean isReport;
+        Boolean isReport;
     }
 }
