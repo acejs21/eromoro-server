@@ -1,4 +1,7 @@
 package com.ermr.eromoro.repository;
 
-public interface CourseRepository {
+import com.ermr.eromoro.domain.Course;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CourseRepository extends JpaRepository<Course, Long> {
 }
