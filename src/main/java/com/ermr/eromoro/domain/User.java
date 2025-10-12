@@ -1,5 +1,6 @@
 package com.ermr.eromoro.domain;
 
+import com.ermr.eromoro.domain.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -23,17 +26,17 @@ public class User {
     private Long id;
 
     @Column(name = "name", length = 20)
-    private String name;
+    private String nickname;
 
     @Column(name = "email", length = 50)
-    private String email;
+    private String username;
 
     @Column(name = "password", length = 100)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "disability_type")
-    private DisabilityType disabilityType;
+    @Column(name = "user_type")
+    private UserType userType;
 
     @Column(name = "profile_image")
     private String profileImage;
@@ -56,8 +59,6 @@ public class User {
     @Column(name = "inactive_date", columnDefinition = "DATETIME(6)")
     private LocalDateTime inactiveDate;
 
-    public enum DisabilityType{
-        WHEELCHAIR,
-        ELDERLY
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Feedback> feedbackList = new ArrayList<>();
 }

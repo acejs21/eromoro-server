@@ -14,8 +14,17 @@ public class UserResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SignUpResultDTO {
+        String nickname;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SignInResultDTO {
         Long userId;
-        LocalDateTime createdAt;
+        String accessToken;
+        String refreshToken;
     }
 
     @Builder
@@ -24,5 +33,15 @@ public class UserResponseDTO {
     @AllArgsConstructor
     public static class SignUpExceptionDTO {
         Integer flag;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RefreshAccessTokenResultDTO {
+        Long userId;
+        String accessToken;
+        String refreshToken;
     }
 }
