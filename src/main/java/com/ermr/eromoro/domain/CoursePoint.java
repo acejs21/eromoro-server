@@ -41,5 +41,6 @@ public class CoursePoint {
             foreignKey = @ForeignKey(name = "fk_course_points_course")
     )
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @com.fasterxml.jackson.annotation.JsonBackReference
     private Course course;
 }

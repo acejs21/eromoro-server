@@ -20,7 +20,7 @@ public class CourseConverter {
                 .id(course.getId())
                 .userId(course.getUserId())
                 .spotId(course.getSpotId())
-                .name(course.getName())
+                .title(course.getTitle())
                 .stepCount(course.getStepCount())
                 .rampCount(course.getRampCount())
                 .likeCount(course.getLikeCount())

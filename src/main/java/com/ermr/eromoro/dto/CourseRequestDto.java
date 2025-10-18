@@ -11,7 +11,7 @@ public class CourseRequestDto {
     public static class GenerateDto {
         LatLon start;
         LatLon end;
-        Integer targetDurationSec;
+        Integer targetDurationMin;
         BigDecimal speedMps;
     }
 
