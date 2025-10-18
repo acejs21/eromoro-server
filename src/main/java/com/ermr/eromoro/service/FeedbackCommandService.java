@@ -9,13 +9,14 @@ import com.ermr.eromoro.domain.User;
 import com.ermr.eromoro.dto.FeedbackRequestDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface FeedbackCommandService {
 
-    Feedback create(FeedbackRequestDto.CreateDto request, Long userId);
+    Feedback create(FeedbackRequestDto.CreateDto request, MultipartFile image, Long userId);
     Feedback update(Long feedbackId, FeedbackRequestDto.UpdateDto request);
     LocalDateTime delete(Long feedbackId);
 }
