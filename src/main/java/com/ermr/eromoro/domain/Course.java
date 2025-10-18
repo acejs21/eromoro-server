@@ -26,8 +26,8 @@ public class Course {
     @Column(name = "spot_id")
     private Long spotId;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "title")
+    private String title;
 
     @Column(name = "step_count")
     private int stepCount;
@@ -42,7 +42,10 @@ public class Course {
     private int duration;
 
     @Column(name = "distance")
-    private int distance;
+    private float distance;
+
+    @Column(name = "is_public")
+    private boolean isPublic;
 
     // Course <-> CoursePoint 양방향
     // Course 쪽  OneToMany 설정
@@ -50,8 +53,9 @@ public class Course {
     @OneToMany(mappedBy = "course",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @OrderBy("seq ASC")
     @Builder.Default
-    @JsonIgnore
+    @com.fasterxml.jackson.annotation.JsonManagedReference
     private List<CoursePoint> points = new ArrayList<>();
 
     public void addPoint(CoursePoint point) {

@@ -6,6 +6,7 @@ import com.ermr.eromoro.domain.Course;
 import com.ermr.eromoro.domain.CoursePoint;
 import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.dto.CourseResponseDto;
+import com.ermr.eromoro.jwt.SecurityUtil;
 import com.ermr.eromoro.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,8 @@ public class CourseController {
     public ApiResponse<CourseResponseDto.GenerateResultDto> generate(
             @RequestBody CourseRequestDto.GenerateDto request
     ){
-        List<Course> courseList = courseService.generateCourse(request);
+        Long userId = SecurityUtil.getCurrentUserId();
+        List<Course> courseList = courseService.generateCourse(request, userId);
         return ApiResponse.onSuccess(CourseConverter.toGenerateResultDto(courseList));
     }
 

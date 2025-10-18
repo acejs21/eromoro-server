@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,22 +27,30 @@ public class CourseService {
     private final OsrmClient osrmClient;
 
     @Transactional
-    public List<Course> generateCourse(CourseRequestDto.GenerateDto request) {
+    public List<Course> generateCourse(CourseRequestDto.GenerateDto request, Long userId) {
 
         // OSRM 클라이언트 사용 코스 생성
         CourseRequestDto.LatLon snappedStart = osrmClient.nearest(request.getStart());
         CourseRequestDto.LatLon snappedEnd   = osrmClient.nearest(request.getEnd());
 
         OsrmClient.RouteResult route = osrmClient.route(snappedStart, snappedEnd);
+        
+        // distance KM 변환
+        float distanceKm = BigDecimal.valueOf(route.getDistanceMeters())
+                .divide(BigDecimal.valueOf(1000), 1, RoundingMode.HALF_UP)
+                .floatValue();
+
+        // duration Min 변환
+        int durationMin = (int) (route.getDurationSeconds() / 60.0);
 
         // 코스 저장
-        // TODO: USER ID 값 얻어 오기
-        Long userId = 1L;
         Course course = Course.builder()
                 .userId(userId)
-                .name(buildCourseName(snappedStart, snappedEnd))
-                .duration((int) Math.round(route.getDurationSeconds()))
-                .distance((int) Math.round(route.getDistanceMeters()))
+                .title(buildCourseTitle(snappedStart, snappedEnd))
+                .likeCount(0)
+                .isPublic(false)
+                .duration(durationMin)
+                .distance(distanceKm)
                 .build();
 
         int seq = 0;
@@ -59,7 +69,7 @@ public class CourseService {
         return List.of(course);
     }
 
-    private String buildCourseName(CourseRequestDto.LatLon start, CourseRequestDto.LatLon end) {
+    private String buildCourseTitle(CourseRequestDto.LatLon start, CourseRequestDto.LatLon end) {
         return String.format("Course (%.5f, %.5f) → (%.5f, %.5f)",
                 start.getLat().doubleValue(),
                 start.getLon().doubleValue(),
