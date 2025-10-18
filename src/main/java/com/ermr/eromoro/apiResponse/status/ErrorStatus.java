@@ -23,15 +23,12 @@ public enum ErrorStatus implements BaseErrorCode {
     FEEDBACK_NOT_FOUND(HttpStatus.BAD_REQUEST, "FEEDBACK4001", "피드백을 찾을 수 없습니다."),
 
     // 코스 (course) 관련 에러
-    COURSE_NOT_FOUND(HttpStatus.BAD_REQUEST, "COURSE4001", "코스를 찾을 수 없습니다.");
+    COURSE_NOT_FOUND(HttpStatus.BAD_REQUEST, "COURSE4001", "코스를 찾을 수 없습니다."),
   
     // User 관련 에러
     USER_ALREADY_EXISTING_ACCOUNT(HttpStatus.BAD_REQUEST, "USER4001", "이미 존재하는 계정입니다."),
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4002", "해당 아이디를 가진 유저가 존재하지 않습니다."),
     USER_PASSWORD_NOT_MATCHED(HttpStatus.BAD_REQUEST, "USER4003", "비밀번호가 일치하지 않습니다."),
-
-    // Feedback 관련 에러
-    FEEDBACK_NOT_FOUND(HttpStatus.BAD_REQUEST, "FEEDBACK4001", "피드백을 찾을 수 없습니다."),
 
     // 인가 관련 에러
     AUTHORIZATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4001", "인증에 실패하였습니다."),

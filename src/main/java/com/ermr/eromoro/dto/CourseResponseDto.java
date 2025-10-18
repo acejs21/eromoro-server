@@ -27,12 +27,12 @@ public class CourseResponseDto {
         Long id;
         Long userId;
         Long spotId;
-        String name;
+        String title;
         int stepCount;
         int rampCount;
         int likeCount;
         int duration;
-        int distance;
+        float distance;
         List<PointDto> points;
     }
 
