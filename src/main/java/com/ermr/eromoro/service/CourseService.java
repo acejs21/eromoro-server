@@ -1,12 +1,15 @@
 package com.ermr.eromoro.service;
 
 import com.ermr.eromoro.apiResponse.exception.handler.CourseHandler;
+import com.ermr.eromoro.apiResponse.exception.handler.UserHandler;
 import com.ermr.eromoro.apiResponse.status.ErrorStatus;
 import com.ermr.eromoro.domain.Course;
 import com.ermr.eromoro.domain.CoursePoint;
+import com.ermr.eromoro.domain.User;
 import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.repository.CoursePointRepository;
 import com.ermr.eromoro.repository.CourseRepository;
+import com.ermr.eromoro.repository.UserRepository;
 import com.ermr.eromoro.util.OsrmClient;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +28,12 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CoursePointRepository coursePointRepository;
     private final OsrmClient osrmClient;
+    private final UserRepository userRepository;
 
     @Transactional
     public List<Course> generateCourse(CourseRequestDto.GenerateDto request, Long userId) {
+        User getUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         // OSRM 클라이언트 사용 코스 생성
         CourseRequestDto.LatLon snappedStart = osrmClient.nearest(request.getStart());
@@ -45,7 +51,7 @@ public class CourseService {
 
         // 코스 저장
         Course course = Course.builder()
-                .userId(userId)
+                .user(getUser)
                 .title(buildCourseTitle(snappedStart, snappedEnd))
                 .likeCount(0)
                 .isPublic(false)
@@ -60,7 +66,8 @@ public class CourseService {
                     .latitude(p.getLat())
                     .longitude(p.getLon())
                     .build();
-            course.addPoint(cp); // 양방향 편의 메서드
+            cp.setCourse(course); // 양방향 편의 메소드
+//            course.addPoint(cp); // 양방향 편의 메서드
         }
 
         // 부모만 저장하면 자식이 Cascade로 함께 INSERT

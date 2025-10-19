@@ -1,0 +1,75 @@
+package com.ermr.eromoro.service;
+
+import com.ermr.eromoro.apiResponse.exception.handler.UserHandler;
+import com.ermr.eromoro.apiResponse.status.ErrorStatus;
+import com.ermr.eromoro.converter.CoursePointConverter;
+import com.ermr.eromoro.domain.Course;
+import com.ermr.eromoro.domain.CoursePoint;
+import com.ermr.eromoro.domain.User;
+import com.ermr.eromoro.dto.CourseRequestDto;
+import com.ermr.eromoro.dto.CourseResponseDto;
+import com.ermr.eromoro.repository.CoursePointRepository;
+import com.ermr.eromoro.repository.CourseRepository;
+import com.ermr.eromoro.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class CourseCommandServiceImpl implements CourseCommandService{
+
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
+    private final CoursePointRepository coursePointRepository;
+
+    @Override
+    @Transactional
+    public void startCourse(Long userId) {
+        User getUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        getUser.updateIsCourse();
+    }
+
+    @Override
+    public User getIsCourseStatus(Long userId) {
+        User getUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        return getUser;
+    }
+
+    @Override
+    public Course saveCoursePointList(Long userId, CourseRequestDto.CoursePointListDto request) {
+        User getUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        Course newCourse = Course.builder()
+                .user(getUser)
+                .title(getUser.getNickname() + "님의 코스")
+                .likeCount(0)
+                .duration(request.getDuration())
+                .distance(request.getDistance())
+                .rating(0)
+                .isPublic(false)
+                .build();
+        Course savedCourse = courseRepository.save(newCourse);
+        List<CoursePoint> newCoursePointList = CoursePointConverter.toCoursePointList(request, newCourse);
+        coursePointRepository.saveAll(newCoursePointList);
+
+        return savedCourse;
+    }
+
+    @Override
+    @Transactional
+    public void saveCourseInfo(Long userId, Long courseId, CourseRequestDto.CourseInfoDto request) {
+        User getUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        Course getCourse = courseRepository.findById(courseId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.COURSE_NOT_FOUND));
+        if(!getCourse.getUser().equals(getUser)) {
+            throw new UserHandler(ErrorStatus.COURSE_NOT_AUTHORIZED);
+        }
+        getCourse.updateCourseInfo(request.getTitle(), request.getIsPublic(), request.getRating());
+    }
+}
