@@ -14,6 +14,7 @@ public class UserConverter {
                 .username(request.getUsername())
                 .password(password)
                 .userType(request.getUserType())
+                .isCourse(false)
                 .build();
     }
 
