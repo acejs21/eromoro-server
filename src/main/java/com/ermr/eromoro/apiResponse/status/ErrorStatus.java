@@ -31,7 +31,12 @@ public enum ErrorStatus implements BaseErrorCode {
     LOGOUT_USER(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4004", "로그아웃된 유저입니다."),
     JWT_TOKEN_NOT_RECEIVED(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4005", "JWT 토큰이 전달되지 않았습니다."),
     JWT_TOKEN_OUT_OF_FORM(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4006", "JWT 토큰의 형식이 올바르지 않습니다."),
-    REFRESH_TOKEN_NOT_EQUAL(HttpStatus.BAD_REQUEST, "AUTHORIZATION4007", "RefreshToken이 일치하지 않습니다.");
+    REFRESH_TOKEN_NOT_EQUAL(HttpStatus.BAD_REQUEST, "AUTHORIZATION4007", "RefreshToken이 일치하지 않습니다."),
+
+    // 코스 관련 에러
+    COURSE_NOT_FOUND(HttpStatus.BAD_REQUEST, "COURSE4001", "코스를 찾을 수 없습니다."),
+    COURSE_NOT_AUTHORIZED(HttpStatus.FORBIDDEN, "COURSE4002", "코스에 대한 권한이 없습니다."),
+    INVALID_COURSE_TYPE(HttpStatus.BAD_REQUEST, "COURSE4003", "유효하지 않은 코스 타입입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

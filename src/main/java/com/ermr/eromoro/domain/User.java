@@ -50,6 +50,9 @@ public class User {
     @Column(name = "feedback_reward")
     private int feedbackReward;
 
+    @Column
+    private boolean isCourse;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -61,4 +64,14 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Feedback> feedbackList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Course> courseList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<LikeCourse> likeCourseList = new ArrayList<>();
+
+    public void updateIsCourse() {
+        isCourse = true;
+    }
 }

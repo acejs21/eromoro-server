@@ -79,11 +79,11 @@ public class FeedbackController {
                     " 피드백 삭제 API 입니다."
     )
     @DeleteMapping("/{feedback_id}")
-    public ApiResponse<LocalDateTime> deleteFeedback(
+    public ApiResponse<?> deleteFeedback(
             @PathVariable("feedback_id") Long feedbackId
     ) {
         LocalDateTime deletedAt = feedbackCommandService.delete(feedbackId);
-        return ApiResponse.onSuccess(deletedAt);
+        return ApiResponse.onSuccess("");
     }
 
     //getFeedbacksByArea

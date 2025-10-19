@@ -1,0 +1,49 @@
+package com.ermr.eromoro.domain;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.sql.Time;
+
+@Entity
+@Table(name = "course_points")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CoursePoint {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "course_id")
+    private Course course;
+
+    private int seq;
+
+    @Column(name = "latitude", precision = 10, scale = 6, nullable = false)
+    private BigDecimal latitude;
+
+    @Column(name = "longitude", precision = 10, scale = 6, nullable = false)
+    private BigDecimal longitude;
+
+    /* 편의 메서드 */
+    public void setCourse(Course newCourse) {
+        // 0) 동일 대상이면 아무 것도 안 함
+        if (this.course == newCourse) return;
+        // 1) 이전 관계 끊기: 기존 user 컬렉션에서 FeedbackList 제거
+        if (this.course != null) {
+            this.course.getCoursePointList().remove(this);
+        }
+        // 2) 필드 교체
+        this.course = newCourse;
+        // 3) 새 관계에 추가 (null/중복 방지)
+        if (newCourse != null && !newCourse.getCoursePointList().contains(this)) {
+            newCourse.getCoursePointList().add(this);
+        }
+    }
+}
