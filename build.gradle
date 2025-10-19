@@ -21,6 +21,7 @@ repositories {
 dependencies {
 	// web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -48,6 +49,12 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	// GSON
 	implementation 'com.google.code.gson:gson:2.11.0'
+
+	// AWS SDK v2
+	implementation platform('software.amazon.awssdk:bom:2.25.32')
+	// S3 클라이언트 (NCP Object Storage와 호환)
+	implementation 'software.amazon.awssdk:s3'
+	implementation 'software.amazon.awssdk:netty-nio-client'
 }
 
 tasks.named('test') {

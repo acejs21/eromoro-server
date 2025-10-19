@@ -3,6 +3,7 @@ package com.ermr.eromoro.controller;
 import com.ermr.eromoro.apiResponse.ApiResponse;
 import com.ermr.eromoro.converter.CourseConverter;
 import com.ermr.eromoro.domain.Course;
+import com.ermr.eromoro.domain.CoursePoint;
 import com.ermr.eromoro.domain.User;
 import com.ermr.eromoro.domain.enums.CourseType;
 import com.ermr.eromoro.dto.CourseRequestDto;
@@ -10,6 +11,7 @@ import com.ermr.eromoro.dto.CourseResponseDto;
 import com.ermr.eromoro.jwt.SecurityUtil;
 import com.ermr.eromoro.service.CourseCommandService;
 import com.ermr.eromoro.service.CourseQueryService;
+import com.ermr.eromoro.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ public class CourseController {
 
     private final CourseCommandService courseCommandService;
     private final CourseQueryService courseQueryService;
+    private final CourseService courseService;
 
     @Operation(summary = "코스 시작 [v1.0 (2025-10-10)]", description =
             "# [v1.0 (2025-10-10)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=2645335b207280d680e3dadb83f6f52e&pm=s)" +
@@ -86,5 +89,23 @@ public class CourseController {
         Long userId = SecurityUtil.getCurrentUserId();
         List<Course> courseList = courseQueryService.getCourseList(userId, courseType, keyword, spotId);
         return ApiResponse.onSuccess(CourseConverter.toGetCourseListResultDto(courseList, courseType));
+    }
+
+    @PostMapping("/generate")
+    public ApiResponse<CourseResponseDto.GenerateResultDto> generate(
+            @RequestBody CourseRequestDto.GenerateDto request
+    ){
+        Long userId = SecurityUtil.getCurrentUserId();
+        List<Course> courseList = courseService.generateCourse(request, userId);
+        return ApiResponse.onSuccess(CourseConverter.toGenerateResultDto(courseList));
+    }
+
+    @GetMapping("/{course_id}")
+    public ApiResponse<CourseResponseDto.CourseDetailDto> getCourseDetail(
+            @PathVariable("course_id") Long courseId
+    ) {
+        Course course = courseService.getCourse(courseId);
+        List<CoursePoint> points = courseService.getCoursePointsOrdered(courseId);
+        return ApiResponse.onSuccess(CourseConverter.toCourseDetailDto(course, points));
     }
 }
