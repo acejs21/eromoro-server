@@ -26,7 +26,6 @@ public class Feedback {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @Column(name = "emd_area_id", nullable = false)
     @Column(name = "emd_area_id")
     private Long emdAreaId;
 

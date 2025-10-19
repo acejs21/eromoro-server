@@ -38,7 +38,7 @@ public class FeedbackController {
             @RequestPart(value = "photo", required = false) MultipartFile image
     ){
         Long userId = SecurityUtil.getCurrentUserId();
-        Feedback feedback = feedbackCommandService.create(request, userId);
+        Feedback feedback = feedbackCommandService.create(request, image, userId);
         return ApiResponse.onSuccess(FeedbackConverter.toCreateResultDTO(feedback));
     }
 

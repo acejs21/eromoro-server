@@ -1,6 +1,7 @@
 package com.ermr.eromoro.domain;
 
 import com.ermr.eromoro.domain.common.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,7 +33,7 @@ public class Course extends BaseEntity {
     private int likeCount;
 
     @Column(nullable = false)
-    private LocalTime duration;
+    private int duration;
 
     @Column(nullable = false)
     private float distance;
@@ -46,7 +47,10 @@ public class Course extends BaseEntity {
 
     private int stepCount;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("seq ASC")
+    @Builder.Default
+    @com.fasterxml.jackson.annotation.JsonManagedReference // ???
     private List<CoursePoint> coursePointList = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
@@ -73,4 +77,21 @@ public class Course extends BaseEntity {
         this.rating = rating;
         this.isPublic = isPublic;
     }
+
+//    // 영범 코드
+//    // Course <-> CoursePoint 양방향
+//    // Course 쪽  OneToMany 설정
+//    // 부모(Course)만 저장해도 자식(CoursePoint)가 저장
+//    @OneToMany(mappedBy = "course",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true)
+//    @OrderBy("seq ASC")
+//    @Builder.Default
+//    @com.fasterxml.jackson.annotation.JsonManagedReference
+//    private List<CoursePoint> points = new ArrayList<>();
+//
+//    public void addPoint(CoursePoint point) {
+//        points.add(point);
+//        point.setCourse(this);
+//    }
 }
