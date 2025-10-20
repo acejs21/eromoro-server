@@ -87,8 +87,7 @@ public class CourseController {
             @RequestParam(required=false) Long spotId
     ){
         Long userId = SecurityUtil.getCurrentUserId();
-        List<Course> courseList = courseQueryService.getCourseList(userId, courseType, keyword, spotId);
-        return ApiResponse.onSuccess(CourseConverter.toGetCourseListResultDto(courseList, courseType));
+        return ApiResponse.onSuccess(courseQueryService.getCourseList(userId, courseType, keyword, spotId));
     }
 
     @PostMapping("/generate")
