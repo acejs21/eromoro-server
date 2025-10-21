@@ -78,6 +78,10 @@ public class Course extends BaseEntity {
         this.isPublic = isPublic;
     }
 
+    public void updateLikeCount(int likeCountDelta) {
+        this.likeCount += likeCountDelta;
+    }
+
 //    // 영범 코드
 //    // Course <-> CoursePoint 양방향
 //    // Course 쪽  OneToMany 설정
