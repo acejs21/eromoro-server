@@ -90,4 +90,13 @@ public class CourseResponseDto {
         BigDecimal latitude;
         BigDecimal longitude;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class updateLikeStatusResultDto {
+        boolean isLiked;
+        int likeCount;
+    }
 }

@@ -82,4 +82,11 @@ public class CourseConverter {
                         .collect(Collectors.toList()))
                 .build();
     }
+
+    public static CourseResponseDto.updateLikeStatusResultDto toUpdateLikeStatusResultDto(boolean isLiked, int likeCount) {
+        return CourseResponseDto.updateLikeStatusResultDto.builder()
+                .isLiked(isLiked)
+                .likeCount(likeCount)
+                .build();
+    }
 }
