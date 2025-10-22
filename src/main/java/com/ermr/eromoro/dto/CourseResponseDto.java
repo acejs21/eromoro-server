@@ -1,6 +1,7 @@
 package com.ermr.eromoro.dto;
 
 import com.ermr.eromoro.domain.Course;
+import com.ermr.eromoro.domain.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,15 +43,17 @@ public class CourseResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class getCourseResultDto {
-        String profileImage;
         String title;
         int likeCount;
+        boolean isLike;
         int rampCount;
         int stepCount;
         int duration;
         float distance;
-        Boolean isPublic;
         LocalDateTime createdAt;
+        Integer rating;
+        UserType userType;
+        String photo;
     }
 
     @Builder
@@ -86,5 +89,14 @@ public class CourseResponseDto {
         int seq;
         BigDecimal latitude;
         BigDecimal longitude;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class updateLikeStatusResultDto {
+        boolean isLiked;
+        int likeCount;
     }
 }

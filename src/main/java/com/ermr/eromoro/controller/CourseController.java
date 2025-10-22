@@ -87,8 +87,34 @@ public class CourseController {
             @RequestParam(required=false) Long spotId
     ){
         Long userId = SecurityUtil.getCurrentUserId();
-        List<Course> courseList = courseQueryService.getCourseList(userId, courseType, keyword, spotId);
-        return ApiResponse.onSuccess(CourseConverter.toGetCourseListResultDto(courseList, courseType));
+        return ApiResponse.onSuccess(courseQueryService.getCourseList(userId, courseType, keyword, spotId));
+    }
+
+    @Operation(summary = "코스 좋아요 ON/OFF [v1.0 (2025-10-21)]", description =
+            "# [v1.0 (2025-10-10)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=2885335b2072808d9e41fd801608af22&pm=s)" +
+                    " 코스 좋아요 누름/취소 API 입니다. 좋아요를 ON 시키고자 한다면 Query String으로 like = true, 좋아요를 OFF 시키고자 한다면 Query String으로 like = false를 넣어주세요. \n" +
+                    "좋아요 활성화 여부와 좋아요 개수를 반환합니다."
+    )
+    @PostMapping("/{courseId}/like")
+    public ApiResponse<CourseResponseDto.updateLikeStatusResultDto> updateLikeStatus(
+            @PathVariable Long courseId,
+            @RequestParam boolean like
+    ){
+        Long userId = SecurityUtil.getCurrentUserId();
+        return ApiResponse.onSuccess(courseCommandService.updateLikeStatus(userId, courseId, like));
+    }
+
+    @Operation(summary = "코스 삭제 [v1.0 (2025-10-21)]", description =
+            "# [v1.0 (2025-10-10)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=2885335b2072808d9e41fd801608af22&pm=s)" +
+                    " 코스 삭제 API 입니다. 삭제할 코스 ID를 Path Variable로 넣어주세요."
+    )
+    @DeleteMapping("/{courseId}")
+    public ApiResponse<?> deleteCourse(
+            @PathVariable Long courseId
+    ){
+        Long userId = SecurityUtil.getCurrentUserId();
+        courseCommandService.deleteCourse(userId, courseId);
+        return ApiResponse.onSuccess("");
     }
 
     @PostMapping("/generate")
