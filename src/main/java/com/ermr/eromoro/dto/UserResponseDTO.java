@@ -1,11 +1,10 @@
 package com.ermr.eromoro.dto;
 
+import com.ermr.eromoro.domain.enums.IsAvailable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 public class UserResponseDTO {
 
@@ -43,5 +42,13 @@ public class UserResponseDTO {
         Long userId;
         String accessToken;
         String refreshToken;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CheckUsernameIsSameResultDTO {
+        IsAvailable isAvailable;
     }
 }
