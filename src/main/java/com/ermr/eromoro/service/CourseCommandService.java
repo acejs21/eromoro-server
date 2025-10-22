@@ -13,5 +13,7 @@ public interface CourseCommandService {
     User getIsCourseStatus(Long userId);
     Course saveCoursePointList(Long userId, CourseRequestDto.CoursePointListDto request);
     void saveCourseInfo(Long userId, Long courseId, CourseRequestDto.CourseInfoDto request);
+    CourseResponseDto.updateLikeStatusResultDto updateLikeStatus(Long userId, Long courseId, boolean like);
+    void deleteCourse(Long userId, Long courseId);
 }
 
