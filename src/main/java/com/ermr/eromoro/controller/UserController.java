@@ -6,7 +6,7 @@ import com.ermr.eromoro.domain.User;
 import com.ermr.eromoro.dto.UserRequestDTO;
 import com.ermr.eromoro.dto.UserResponseDTO;
 import com.ermr.eromoro.service.UserCommandService;
-import com.ermr.eromoro.service.UserCommandServiceImpl;
+import com.ermr.eromoro.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserCommandService userCommandService;
+    private final UserQueryService  userQueryService;
 
     @Operation(summary = "회원가입 [v1.1 (2025-10-13)]", description =
             "# [v1.1 (2025-10-13)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=24b5335b207281cc8ef8f2065b480a2e&pm=s)" +
@@ -74,6 +75,19 @@ public class UserController {
     ) {
         return ApiResponse.onSuccess(
                 userCommandService.refreshAccessToken(refreshToken)
+        );
+    }
+
+    @Operation(summary = "아이디 중복 검사 [v1.0 (2025-10-22)]", description =
+            "# [v1.0 (2025-10-22)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=24b5335b2072815c8eb1c60afa39a2a0&pm=s)" +
+                    " 아이디 중복 검사 API 입니다."
+    )
+    @PostMapping("/signup/same")
+    public ApiResponse<UserResponseDTO.CheckUsernameIsSameResultDTO> checkUsernameIsSame(
+            @RequestBody UserRequestDTO.CheckUsernameIsSameDTO request
+    ) {
+        return ApiResponse.onSuccess(
+                UserConverter.toCheckUsernameIsSameResultDTO(userQueryService.checkUsernameIsSame(request))
         );
     }
 }

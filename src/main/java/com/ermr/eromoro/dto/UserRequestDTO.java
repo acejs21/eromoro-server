@@ -25,4 +25,17 @@ public class UserRequestDTO {
         @NotBlank(message = "비밀번호는 빈값일 수 없습니다.")
         String password;
     }
+
+    @Getter
+    public static class IsDto {
+        @NotBlank(message = "아이디는 빈값일 수 없습니다.")
+        String username;
+        @NotBlank(message = "비밀번호는 빈값일 수 없습니다.")
+        String password;
+    }
+
+    @Getter
+    public static class CheckUsernameIsSameDTO {
+        String username;
+    }
 }

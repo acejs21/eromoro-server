@@ -28,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String[] whitelist = {
             "/users/signup",
             "/users/signin",
+            "/users/signup/same",
             "/swagger-ui/**",
             "/v3/**",
             "/favicon.ico"
