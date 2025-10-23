@@ -45,7 +45,7 @@ public class CourseResponseDto {
     public static class getCourseResultDto {
         String title;
         int likeCount;
-        boolean isLike;
+        boolean isLiked;
         int rampCount;
         int stepCount;
         int duration;
