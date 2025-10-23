@@ -74,4 +74,12 @@ public class User {
     public void updateIsCourse() {
         isCourse = true;
     }
+
+    public void updateName(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateUserType(UserType userType) {
+        this.userType = userType;
+    }
 }
