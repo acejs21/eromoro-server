@@ -5,6 +5,7 @@ import com.ermr.eromoro.converter.UserConverter;
 import com.ermr.eromoro.domain.User;
 import com.ermr.eromoro.dto.UserRequestDTO;
 import com.ermr.eromoro.dto.UserResponseDTO;
+import com.ermr.eromoro.jwt.SecurityUtil;
 import com.ermr.eromoro.service.UserCommandService;
 import com.ermr.eromoro.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -89,5 +90,18 @@ public class UserController {
         return ApiResponse.onSuccess(
                 UserConverter.toCheckUsernameIsSameResultDTO(userQueryService.checkUsernameIsSame(request))
         );
+    }
+
+    @Operation(summary = "회원 정보 수정 [v1.0 (2025-10-23)]", description =
+            "# [v1.0 (2025-10-23)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=24b5335b207281128b0ff540822a3237&pm=s)" +
+                    " 회원 정보 수정 API 입니다."
+    )
+    @PatchMapping("/info")
+    public ApiResponse<?> updateUserInfo(
+            @RequestBody UserRequestDTO.UpdateUserInfoDTO request
+    ) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        userCommandService.updateUserInfo(userId, request);
+        return ApiResponse.onSuccess("");
     }
 }

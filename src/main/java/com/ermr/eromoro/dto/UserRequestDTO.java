@@ -38,4 +38,10 @@ public class UserRequestDTO {
     public static class CheckUsernameIsSameDTO {
         String username;
     }
+
+    @Getter
+    public static class UpdateUserInfoDTO {
+        String nickname;
+        UserType userType;
+    }
 }
