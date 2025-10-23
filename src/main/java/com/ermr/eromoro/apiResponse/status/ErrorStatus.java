@@ -23,6 +23,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Feedback 관련 에러
     FEEDBACK_NOT_FOUND(HttpStatus.BAD_REQUEST, "FEEDBACK4001", "피드백을 찾을 수 없습니다."),
+    FEEDBACK_ALREADY_LIKED(HttpStatus.BAD_REQUEST, "FEEDBACK4002", "이미 좋아요를 누른 피드백입니다."),
+    FEEDBACK_NOT_LIKED(HttpStatus.BAD_REQUEST, "FEEDBACK4003", "좋아요를 누르지 않은 피드백입니다."),
+    FEEDBACK_NOT_AUTHORIZED(HttpStatus.FORBIDDEN, "FEEDBACK4004", "피드백에 대한 권한이 없습니다."),
 
     // 인가 관련 에러
     AUTHORIZATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4001", "인증에 실패하였습니다."),

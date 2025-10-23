@@ -32,7 +32,7 @@ public class CourseConverter {
                 .map(course -> CourseResponseDto.getCourseResultDto.builder()
                         .title(course.getTitle())
                         .likeCount(course.getLikeCount())
-                        .isLike(true)
+                        .isLiked(true)
                         .rampCount(course.getRampCount())
                         .stepCount(course.getStepCount())
                         .duration(course.getDuration())
