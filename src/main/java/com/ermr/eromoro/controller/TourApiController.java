@@ -29,4 +29,18 @@ public class TourApiController {
         tourApiService.collectSiggArea();
         return ApiResponse.onSuccess("");
     }
+
+    @Operation(summary = "[백엔드 개발자용] 관광지 데이터 저장", description = " 관광지 데이터 저장 API 입니다.")
+    @PostMapping("/collect/spot")
+    public ApiResponse<?> collectSpot(){
+        tourApiService.collectSpot();
+        return ApiResponse.onSuccess("");
+    }
+
+    @Operation(summary = "[백엔드 개발자용] 관광지 상세정보 데이터 및 시설정보 데이터 저장", description = " 관광지 상세정보 데이터 및 시설정보 데이터 저장 API 입니다.")
+    @PostMapping("/collect/info/facility")
+    public ApiResponse<?> collectInfoAndFacility(){
+        tourApiService.collectInfoAndFacility();
+        return ApiResponse.onSuccess("");
+    }
 }

@@ -1,5 +1,6 @@
 package com.ermr.eromoro.domain;
 
+import com.ermr.eromoro.domain.enums.ContentType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,13 +35,21 @@ public class Spot {
     @Column(columnDefinition = "TEXT")
     private String address;
 
-    public void setSiggArea(SiggArea siggArea) {
-        this.siggArea = siggArea;
-    }
+    @Enumerated(EnumType.STRING)
+    private ContentType contentType;
+
+    @Column(columnDefinition = "TEXT")
+    private String imageUrl;
+
+    private String contentId;
 
     @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL)
     private List<SpotImage> spotImageList = new ArrayList<>();
 
     @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL)
-    private List<FacilityInformation> facilityInformationList = new ArrayList<>();
+    private List<SpotFacilityInformation> spotFacilityInformationList = new ArrayList<>();
+
+    public void updateInfo(String overview) {
+        this.information = overview;
+    }
 }

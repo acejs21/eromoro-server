@@ -8,15 +8,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 class WebClientConfig {
 
-    @Value("${tour-api.base-url}")
-    private String baseUrl;
-
-
     @Bean
-    public WebClient webClient(WebClient.Builder builder) {
-        return builder
-                .baseUrl(baseUrl)
-                .build();
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder(); // baseUrl 미설정
     }
 }
 
