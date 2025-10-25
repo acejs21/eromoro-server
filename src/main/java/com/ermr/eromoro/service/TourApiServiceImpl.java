@@ -2,8 +2,10 @@ package com.ermr.eromoro.service;
 
 import com.ermr.eromoro.converter.TourApiConverter;
 import com.ermr.eromoro.domain.SidoArea;
+import com.ermr.eromoro.domain.SiggArea;
 import com.ermr.eromoro.dto.TourApiResponseDto;
 import com.ermr.eromoro.repository.SidoAreaRepository;
+import com.ermr.eromoro.repository.SiggAreaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,16 +22,25 @@ public class TourApiServiceImpl implements TourApiService {
     private String serviceKey;
     private final WebClient webClient;
     private final SidoAreaRepository sidoAreaRepository;
+    private final SiggAreaRepository siggAreaRepository;
 
     @Override
     public void collectSidoArea() {
+        sidoAreaRepository.deleteAll();
         List<SidoArea> sidoAreaList = TourApiConverter.toSidoAreaList(getAreaCode(null));
-        for(SidoArea sidoArea : sidoAreaList) {
-            System.out.println("지역코드: " + sidoArea.getCode());
-            System.out.println("지역이름: " + sidoArea.getName());
-            System.out.println("-----------------------");
-        }
         sidoAreaRepository.saveAll(sidoAreaList);
+    }
+
+    @Override
+    public void collectSiggArea() {
+        siggAreaRepository.deleteAll();
+        sidoAreaRepository.findAll().forEach(sidoArea -> {
+            List<SiggArea> siggAreaList = TourApiConverter.toSiggAreaList(
+                    sidoArea,
+                    getAreaCode(Integer.valueOf(sidoArea.getCode()))
+            );
+            siggAreaRepository.saveAll(siggAreaList);
+        });
     }
 
     /**
@@ -37,7 +48,7 @@ public class TourApiServiceImpl implements TourApiService {
      * @param areaCode (선택) 특정 지역의 시군구 코드를 조회하려면 상위 지역코드를 입력
      * @return AreaCodeResponseDto Mono 객체
      */
-    private Mono<TourApiResponseDto.AreaCodeApiResponse> getAreaCode(String areaCode) {
+    private Mono<TourApiResponseDto.AreaCodeApiResponse> getAreaCode(Integer areaCode) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/areaCode2")
