@@ -83,6 +83,7 @@ public class FeedbackCommandServiceImpl implements FeedbackCommandService {
     }
 
     @Override
+    @Transactional
     public FeedbackResponseDto.updateLikeStatusResultDto updateLikeStatus(Long userId, Long feedbackId, boolean like) {
         User getUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));

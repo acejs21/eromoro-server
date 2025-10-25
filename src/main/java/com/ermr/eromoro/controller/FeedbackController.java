@@ -92,7 +92,7 @@ public class FeedbackController {
     )
     @PostMapping("/{feedback-id}/like")
     public ApiResponse<FeedbackResponseDto.updateLikeStatusResultDto> updateLikeStatus(
-            @PathVariable Long feedbackId,
+            @PathVariable("feedback-id") Long feedbackId,
             @RequestParam boolean like
     ){
         Long userId = SecurityUtil.getCurrentUserId();
