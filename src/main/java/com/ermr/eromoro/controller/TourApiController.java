@@ -1,0 +1,25 @@
+package com.ermr.eromoro.controller;
+
+import com.ermr.eromoro.apiResponse.ApiResponse;
+import com.ermr.eromoro.service.SpotCommandService;
+import com.ermr.eromoro.service.TourApiService;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/tour-api")
+@RequiredArgsConstructor
+public class TourApiController {
+
+    private final TourApiService tourApiService;
+
+    @Operation(summary = "[백엔드 개발자용] 관광지 지역(시도) 저장", description = " 관광지 지역(시도) 저장 API 입니다.")
+    @PostMapping("/collect/sido-area")
+    public ApiResponse<?> collectSidoArea(){
+        tourApiService.collectSidoArea();
+        return ApiResponse.onSuccess("");
+    }
+}
