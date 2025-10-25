@@ -43,6 +43,7 @@ public class CourseResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class getCourseResultDto {
+        Long courseId;
         String title;
         int likeCount;
         boolean isLiked;
