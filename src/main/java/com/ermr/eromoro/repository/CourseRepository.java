@@ -14,6 +14,7 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("""
     select new com.ermr.eromoro.dto.CourseResponseDto$getCourseResultDto(
+      c.id,
       c.title,
       c.likeCount,
       case when exists (
@@ -41,6 +42,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @Query("""
     select new com.ermr.eromoro.dto.CourseResponseDto$getCourseResultDto(
+      c.id,
       c.title,
       c.likeCount,
       case when exists (
