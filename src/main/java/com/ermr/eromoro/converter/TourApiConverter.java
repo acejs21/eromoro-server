@@ -23,15 +23,10 @@ public class TourApiConverter {
                 .block();
     }
 
-    public static List<SiggArea> toSiggAreaList(SidoArea sidoArea, Mono<TourApiResponseDto.AreaCodeApiResponse> responseMono) {
-        return responseMono
-                .map(response -> response.getResponse().getBody().getItems().getItem().stream()
-                        .map(item -> SiggArea.builder()
-                                .sidoArea(sidoArea)
-                                .code(item.getCode())
-                                .name(item.getName())
-                                .build())
-                        .toList())
-                .block();
+    public static SiggArea toSiggArea(TourApiResponseDto.AreaCodeApiResponse.Item item) {
+        return SiggArea.builder()
+                .code(item.getCode())
+                .name(item.getName())
+                .build();
     }
 }

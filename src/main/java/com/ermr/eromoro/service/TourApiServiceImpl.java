@@ -6,12 +6,15 @@ import com.ermr.eromoro.domain.SiggArea;
 import com.ermr.eromoro.dto.TourApiResponseDto;
 import com.ermr.eromoro.repository.SidoAreaRepository;
 import com.ermr.eromoro.repository.SiggAreaRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -35,10 +38,18 @@ public class TourApiServiceImpl implements TourApiService {
     public void collectSiggArea() {
         siggAreaRepository.deleteAll();
         sidoAreaRepository.findAll().forEach(sidoArea -> {
-            List<SiggArea> siggAreaList = TourApiConverter.toSiggAreaList(
-                    sidoArea,
+            // 외부 API 호출 결과를 서비스 경계에서만 block
+            List<TourApiResponseDto.AreaCodeApiResponse.Item> items =
                     getAreaCode(Integer.valueOf(sidoArea.getCode()))
-            );
+                            .map(res -> res.getResponse().getBody().getItems().getItem())
+                            .blockOptional()
+                            .orElseGet(Collections::emptyList);
+            List<SiggArea> siggAreaList = new ArrayList<>();
+            for(var item : items) {
+                SiggArea newSiggArea = TourApiConverter.toSiggArea(item);
+                newSiggArea.setSidoArea(sidoArea);
+                siggAreaList.add(newSiggArea);
+            }
             siggAreaRepository.saveAll(siggAreaList);
         });
     }
