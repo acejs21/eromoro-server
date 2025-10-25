@@ -22,4 +22,11 @@ public class TourApiController {
         tourApiService.collectSidoArea();
         return ApiResponse.onSuccess("");
     }
+
+    @Operation(summary = "[백엔드 개발자용] 관광지 지역(시군구) 저장", description = " 관광지 지역(시군구) 저장 API 입니다.")
+    @PostMapping("/collect/sigg-area")
+    public ApiResponse<?> collectSiggArea(){
+        tourApiService.collectSiggArea();
+        return ApiResponse.onSuccess("");
+    }
 }
