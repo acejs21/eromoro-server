@@ -71,8 +71,9 @@ public class FeedbackResponseDto {
     }
 
     @Builder
-//    @NoArgsConstructor
-//    @AllArgsConstructor
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class updateLikeStatusResultDto {
         boolean isLiked;
         int likeCount;

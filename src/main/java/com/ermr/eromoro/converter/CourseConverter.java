@@ -30,6 +30,7 @@ public class CourseConverter {
     ) {
         List<CourseResponseDto.getCourseResultDto> mapped = courseList.stream()
                 .map(course -> CourseResponseDto.getCourseResultDto.builder()
+                        .courseId(course.getId())
                         .title(course.getTitle())
                         .likeCount(course.getLikeCount())
                         .isLiked(true)
