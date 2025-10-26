@@ -29,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/users/signup",
             "/users/signin",
             "/users/signup/same",
+            "/tour-api/collect/**",
             "/swagger-ui/**",
             "/v3/**",
             "/favicon.ico"

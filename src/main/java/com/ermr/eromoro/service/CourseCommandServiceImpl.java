@@ -6,16 +6,10 @@ import com.ermr.eromoro.apiResponse.status.ErrorStatus;
 import com.ermr.eromoro.converter.CourseConverter;
 import com.ermr.eromoro.converter.CoursePointConverter;
 import com.ermr.eromoro.converter.LikeCourseConverter;
-import com.ermr.eromoro.domain.Course;
-import com.ermr.eromoro.domain.CoursePoint;
-import com.ermr.eromoro.domain.LikeCourse;
-import com.ermr.eromoro.domain.User;
+import com.ermr.eromoro.domain.*;
 import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.dto.CourseResponseDto;
-import com.ermr.eromoro.repository.CoursePointRepository;
-import com.ermr.eromoro.repository.CourseRepository;
-import com.ermr.eromoro.repository.LikeCourseRepository;
-import com.ermr.eromoro.repository.UserRepository;
+import com.ermr.eromoro.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +24,7 @@ public class CourseCommandServiceImpl implements CourseCommandService{
     private final CourseRepository courseRepository;
     private final CoursePointRepository coursePointRepository;
     private final LikeCourseRepository likeCourseRepository;
+    private final SpotRepository spotRepository;
 
     @Override
     @Transactional
@@ -47,7 +42,7 @@ public class CourseCommandServiceImpl implements CourseCommandService{
     }
 
     @Override
-    public Course saveCoursePointList(Long userId, CourseRequestDto.CoursePointListDto request) {
+    public Course saveCoursePointList(Long userId, Long spotId, CourseRequestDto.CoursePointListDto request) {
         User getUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Course newCourse = Course.builder()
@@ -59,6 +54,11 @@ public class CourseCommandServiceImpl implements CourseCommandService{
                 .rating(0)
                 .isPublic(false)
                 .build();
+        if (spotId != null) {
+            Spot getSpot = spotRepository.findById(spotId)
+                    .orElseThrow(() -> new UserHandler(ErrorStatus.SPOT_NOT_FOUND));
+            newCourse.setSpot(getSpot);
+        }
         Course savedCourse = courseRepository.save(newCourse);
         List<CoursePoint> newCoursePointList = CoursePointConverter.toCoursePointList(request, newCourse);
         coursePointRepository.saveAll(newCoursePointList);

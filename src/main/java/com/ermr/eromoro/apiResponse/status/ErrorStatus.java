@@ -43,6 +43,9 @@ public enum ErrorStatus implements BaseErrorCode {
     COURSE_ALREADY_LIKED(HttpStatus.BAD_REQUEST, "COURSE4004", "이미 좋아요를 누른 코스입니다."),
     COURSE_NOT_LIKED(HttpStatus.BAD_REQUEST, "COURSE4005", "좋아요를 누르지 않은 코스입니다."),
 
+    // 관광지 관련 에러
+    SPOT_NOT_FOUND(HttpStatus.BAD_REQUEST, "SPOT4001", "관광지를 찾을 수 없습니다."),
+
     // 이미지 관련 에러
     IMAGE_FAIL(HttpStatus.BAD_REQUEST, "IMAGE4001", "이미지 업로드 중 오류가 발생했습니다.");
 
