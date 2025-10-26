@@ -55,10 +55,11 @@ public class CourseController {
     )
     @PostMapping("/point")
     public ApiResponse<?> saveCoursePointList(
+            @RequestParam(required = false) Long spotId,
             @RequestBody CourseRequestDto.CoursePointListDto request
     ){
         Long userId = SecurityUtil.getCurrentUserId();
-        Course savedCourse = courseCommandService.saveCoursePointList(userId, request);
+        Course savedCourse = courseCommandService.saveCoursePointList(userId, spotId, request);
         return ApiResponse.onSuccess(CourseConverter.toSaveCoursePointResultDto(savedCourse));
     }
 
