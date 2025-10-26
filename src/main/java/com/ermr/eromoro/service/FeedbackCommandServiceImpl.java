@@ -1,13 +1,18 @@
 package com.ermr.eromoro.service;
 
+import com.ermr.eromoro.apiResponse.exception.handler.CourseHandler;
 import com.ermr.eromoro.apiResponse.exception.handler.FeedbackHandler;
 import com.ermr.eromoro.apiResponse.exception.handler.UserHandler;
 import com.ermr.eromoro.apiResponse.status.ErrorStatus;
+import com.ermr.eromoro.converter.CourseConverter;
 import com.ermr.eromoro.converter.FeedbackConverter;
-import com.ermr.eromoro.domain.Feedback;
-import com.ermr.eromoro.domain.User;
+import com.ermr.eromoro.converter.LikeCourseConverter;
+import com.ermr.eromoro.converter.LikeFeedbackConverter;
+import com.ermr.eromoro.domain.*;
 import com.ermr.eromoro.dto.FeedbackRequestDto;
+import com.ermr.eromoro.dto.FeedbackResponseDto;
 import com.ermr.eromoro.repository.FeedbackRepository;
+import com.ermr.eromoro.repository.LikeFeedbackRepository;
 import com.ermr.eromoro.repository.UserRepository;
 import com.ermr.eromoro.util.NcpObjectStorageClient;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,6 +33,7 @@ public class FeedbackCommandServiceImpl implements FeedbackCommandService {
     private final FeedbackRepository feedbackRepository;
     private final UserRepository userRepository;
     private final NcpObjectStorageClient storage;
+    private final LikeFeedbackRepository likeFeedbackRepository;
 
     @Override
     public Feedback create(FeedbackRequestDto.CreateDto request, MultipartFile image, Long userId) {
@@ -50,21 +56,21 @@ public class FeedbackCommandServiceImpl implements FeedbackCommandService {
         return feedbackRepository.save(newFeedback);
     }
 
-    @Override
-    @Transactional
-    public Feedback update(Long feedbackId, FeedbackRequestDto.UpdateDto request) {
-        Feedback feedback = feedbackRepository.findById(feedbackId)
-                .orElseThrow(() -> new EntityNotFoundException("Feedback not found: " + feedbackId));
-
-        if (request.getTitle() != null) { feedback.setTitle(request.getTitle()); }
-        if (request.getContent() != null) { feedback.setContent(request.getContent()); }
-        if (request.getType() != null) { feedback.setType(request.getType()); }
-        if (request.getIsReport()) { feedback.setIsReport(true); }
-        if (request.getLatitude() != null) { feedback.setLatitude(request.getLatitude()); }
-        if (request.getLongitude() != null) { feedback.setLongitude(request.getLongitude()); }
-
-        return feedbackRepository.save(feedback);
-    }
+//    @Override
+//    @Transactional
+//    public Feedback update(Long feedbackId, FeedbackRequestDto.UpdateDto request) {
+//        Feedback feedback = feedbackRepository.findById(feedbackId)
+//                .orElseThrow(() -> new EntityNotFoundException("Feedback not found: " + feedbackId));
+//
+//        if (request.getTitle() != null) { feedback.setTitle(request.getTitle()); }
+//        if (request.getContent() != null) { feedback.setContent(request.getContent()); }
+//        if (request.getType() != null) { feedback.setType(request.getType()); }
+//        if (request.getIsReport()) { feedback.setIsReport(true); }
+//        if (request.getLatitude() != null) { feedback.setLatitude(request.getLatitude()); }
+//        if (request.getLongitude() != null) { feedback.setLongitude(request.getLongitude()); }
+//
+//        return feedbackRepository.save(feedback);
+//    }
 
     @Override
     public LocalDateTime delete(Long feedbackId) {
@@ -74,6 +80,33 @@ public class FeedbackCommandServiceImpl implements FeedbackCommandService {
 
         feedbackRepository.delete(feedback);
         return LocalDateTime.now();
+    }
+
+    @Override
+    @Transactional
+    public FeedbackResponseDto.updateLikeStatusResultDto updateLikeStatus(Long userId, Long feedbackId, boolean like) {
+        User getUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        Feedback getFeedback = feedbackRepository.findById(feedbackId)
+                .orElseThrow(() -> new FeedbackHandler(ErrorStatus.FEEDBACK_NOT_FOUND));
+        boolean isLiked;
+
+        LikeFeedback getLikeFeedback = likeFeedbackRepository.findByUserAndFeedback(getUser, getFeedback);
+        if(like) {
+            if (getLikeFeedback != null) throw new FeedbackHandler(ErrorStatus.FEEDBACK_ALREADY_LIKED);
+            else {
+                likeFeedbackRepository.save(LikeFeedbackConverter.toLikeFeedback(getUser, getFeedback));
+                getFeedback.updateLikeCount(1);
+                isLiked = true;
+            }
+        } else {
+            if (getLikeFeedback == null) throw new FeedbackHandler(ErrorStatus.FEEDBACK_NOT_LIKED);
+            likeFeedbackRepository.delete(getLikeFeedback);
+            getFeedback.updateLikeCount(-1);
+            isLiked =  false;
+        }
+
+        return FeedbackConverter.toUpdateLikeStatusResultDto(isLiked, getFeedback.getLikeCount());
     }
 
     // 이미지 저장 util 메소드

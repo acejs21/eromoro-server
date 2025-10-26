@@ -2,10 +2,12 @@ package com.ermr.eromoro.service;
 
 import com.ermr.eromoro.apiResponse.exception.handler.UserHandler;
 import com.ermr.eromoro.apiResponse.status.ErrorStatus;
+import com.ermr.eromoro.converter.CourseConverter;
 import com.ermr.eromoro.domain.Course;
 import com.ermr.eromoro.domain.LikeCourse;
 import com.ermr.eromoro.domain.User;
 import com.ermr.eromoro.domain.enums.CourseType;
+import com.ermr.eromoro.dto.CourseResponseDto;
 import com.ermr.eromoro.repository.CourseRepository;
 import com.ermr.eromoro.repository.LikeCourseRepository;
 import com.ermr.eromoro.repository.UserRepository;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.ermr.eromoro.domain.enums.CourseType.LIKE;
 import static com.ermr.eromoro.domain.enums.CourseType.SPOT;
 
 @Service
@@ -26,27 +29,37 @@ public class CourseQueryServiceImpl implements CourseQueryService {
     private final LikeCourseRepository likeCourseRepository;
 
     @Override
-    public List<Course> getCourseList(Long userId, CourseType courseType, String keyword, Long spotId) {
+    public CourseResponseDto.getCourseListResultDto getCourseList(Long userId, CourseType courseType, String keyword, Long spotId) {
         User getUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         switch (courseType) {
             case ALL:
                 if (keyword == null || keyword.isBlank()) {
-                    return courseRepository.findByUserOrderByCreatedAtDesc(getUser);
+                    return CourseConverter.getCourseResultDtoToGetCourseListResultDto(
+                            courseRepository.findByUserWithLikeCourseOrderByCreatedAtDesc(getUser.getId())
+                    );
                 }
-                return courseRepository.findByUserAndTitleContainingIgnoreCaseOrderByCreatedAtDesc(getUser, keyword);
+                return CourseConverter.getCourseResultDtoToGetCourseListResultDto(
+                        courseRepository.findByUserWithLikeCourseAndTitleContainingOrderByCreatedAtDesc(getUser.getId(), keyword)
+                );
             case LIKE:
                 if (keyword == null || keyword.isBlank()) {
-                    return likeCourseRepository.findByUser(getUser).stream()
+                    List<Course> courseList = likeCourseRepository.findByUser(getUser).stream()
                             .map(LikeCourse::getCourse)
                             .sorted(Comparator.comparing(Course::getCreatedAt).reversed())
                             .toList();
+                    return CourseConverter.courseListToGetCourseListResultDto(courseList);
                 }
-                return null;
-//                return likeCourseRepository.findByUser(getUser).stream()
-//                    .map(LikeCourse::getCourse)
-//                    .sorted(Comparator.comparing(Course::getCreatedAt).reversed())
-//                    .toList();
+                List<Course> courseList = likeCourseRepository.findByUser(getUser).stream()
+                        .map(LikeCourse::getCourse)
+                        .filter(c -> {
+                            String t = c.getTitle();
+                            return t != null && t.toLowerCase().contains(keyword.toLowerCase());
+                        })
+                        .sorted(Comparator.comparing(Course::getCreatedAt).reversed())
+                        .toList();
+
+                return CourseConverter.courseListToGetCourseListResultDto(courseList);
             case SPOT:
                 return null;
             default:

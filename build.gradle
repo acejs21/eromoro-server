@@ -49,7 +49,6 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	// GSON
 	implementation 'com.google.code.gson:gson:2.11.0'
-
 	// AWS SDK v2
 	implementation platform('software.amazon.awssdk:bom:2.25.32')
 	// S3 클라이언트 (NCP Object Storage와 호환)

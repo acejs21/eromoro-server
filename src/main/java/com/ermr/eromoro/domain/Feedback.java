@@ -8,6 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "feedbacks")
@@ -70,6 +72,9 @@ public class Feedback {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "feedback", cascade = CascadeType.ALL)
+    private List<LikeFeedback> likeFeedbackList = new ArrayList<>();
+
     /* 편의 메서드 */
     public void setUser(User newUser) {
         // 0) 동일 대상이면 아무 것도 안 함
@@ -89,4 +94,8 @@ public class Feedback {
     public void dislike() { this.dislikeCount++; }
     public void cancelLike() { if (this.likeCount > 0) this.likeCount--; }
     public void cancelDislike() { if (this.dislikeCount > 0) this.dislikeCount--; }
+
+    public void updateLikeCount(int likeCountDelta) {
+        this.likeCount += likeCountDelta;
+    }
 }

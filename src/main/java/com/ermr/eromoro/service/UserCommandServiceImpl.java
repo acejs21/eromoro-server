@@ -115,4 +115,17 @@ public class UserCommandServiceImpl implements UserCommandService {
         redisTemplate.opsForValue().set(key, refreshToken, refreshExpTime, TimeUnit.SECONDS);
         return refreshToken;
     }
+
+    @Override
+    @Transactional
+    public void updateUserInfo(Long userId, UserRequestDTO.UpdateUserInfoDTO request) {
+        User getUser = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        if (request.getNickname() != null) {
+            getUser.updateName(request.getNickname());
+        }
+        if (request.getUserType() != null) {
+            getUser.updateUserType(request.getUserType());
+        }
+    }
 }

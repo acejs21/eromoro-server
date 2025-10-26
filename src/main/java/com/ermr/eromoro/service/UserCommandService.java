@@ -12,4 +12,5 @@ public interface UserCommandService {
     UserResponseDTO.RefreshAccessTokenResultDTO refreshAccessToken(String refreshToken);
     String generateAccessToken(Long userId, int accessExpTime);
     String generateAndSaveRefreshToken(String key, int refreshExpTime);
+    void updateUserInfo(Long userId, UserRequestDTO.UpdateUserInfoDTO request);
 }

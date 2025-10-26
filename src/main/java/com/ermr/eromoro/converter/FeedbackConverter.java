@@ -32,7 +32,7 @@ public class FeedbackConverter {
                 .build();
     }
 
-    public static FeedbackResponseDto.DetailResultDto toDetailResultDto(Feedback feedback) {
+    public static FeedbackResponseDto.DetailResultDto toDetailResultDto(Feedback feedback, boolean isLiked) {
         return FeedbackResponseDto.DetailResultDto.builder()
                 .feedbackId(feedback.getId())
 //                .emdAreaId(feedback.getEmdAreaId())      // 수정(2025/10/06
@@ -46,30 +46,44 @@ public class FeedbackConverter {
                 .address(feedback.getAddress())
                 .likeCount(feedback.getLikeCount())
                 .dislikeCount(feedback.getDislikeCount())
+                .isLiked(isLiked)
                 .createdAt(feedback.getCreatedAt())
                 .build();
     }
 
-    public static FeedbackResponseDto.MyFeedbacksResultDto toMyFeedbacksResultDto(List<Feedback> feedbacks) {
-        List<FeedbackResponseDto.MyFeedbacksResultDto.MyFeedbackDto> feedbackDtos = feedbacks.stream()
-                .map(f -> FeedbackResponseDto.MyFeedbacksResultDto.MyFeedbackDto.builder()
-                        .feedbackId(f.getId())
-                        .photoUrl(f.getPhotoUrl())
-//                        .emdAreaId(f.getEmdAreaId())
-                        .title(f.getTitle())
-                        .address(f.getAddress())
-                        .type(f.getType())
-                        .createdAt(f.getCreatedAt())
-                        .likeCount(f.getLikeCount())
-                        .dislikeCount(f.getDislikeCount())
-                        .isReport(f.getIsReport())
-                        .accepted(f.getAccepted())
-                        .build())
-                .collect(Collectors.toList());
-
+    public static FeedbackResponseDto.MyFeedbacksResultDto toMyFeedbacksResultDto(List<FeedbackResponseDto.MyFeedbackDto> myFeedbackDtoList) {
         return FeedbackResponseDto.MyFeedbacksResultDto.builder()
-                .feedbacks(feedbackDtos)
-//                .totalCount(feedbackDtos.size())
+                .feedbacks(myFeedbackDtoList)
+                .build();
+    }
+
+//    public static FeedbackResponseDto.MyFeedbacksResultDto toMyFeedbacksResultDto(List<Feedback> feedbacks) {
+//        List<FeedbackResponseDto.MyFeedbackDto> feedbackDtos = feedbacks.stream()
+//                .map(f -> FeedbackResponseDto.MyFeedbackDto.builder()
+//                        .feedbackId(f.getId())
+//                        .photoUrl(f.getPhotoUrl())
+////                        .emdAreaId(f.getEmdAreaId())
+//                        .title(f.getTitle())
+//                        .address(f.getAddress())
+//                        .type(f.getType())
+//                        .createdAt(f.getCreatedAt())
+//                        .likeCount(f.getLikeCount())
+//                        .dislikeCount(f.getDislikeCount())
+//                        .isReport(f.getIsReport())
+//                        .accepted(f.getAccepted())
+//                        .build())
+//                .collect(Collectors.toList());
+//
+//        return FeedbackResponseDto.MyFeedbacksResultDto.builder()
+//                .feedbacks(feedbackDtos)
+////                .totalCount(feedbackDtos.size())
+//                .build();
+//    }
+
+    public static FeedbackResponseDto.updateLikeStatusResultDto toUpdateLikeStatusResultDto(boolean isLiked, int likeCount) {
+        return FeedbackResponseDto.updateLikeStatusResultDto.builder()
+                .isLiked(isLiked)
+                .likeCount(likeCount)
                 .build();
     }
 }

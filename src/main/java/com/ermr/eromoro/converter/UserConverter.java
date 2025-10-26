@@ -1,6 +1,7 @@
 package com.ermr.eromoro.converter;
 
 import com.ermr.eromoro.domain.User;
+import com.ermr.eromoro.domain.enums.IsAvailable;
 import com.ermr.eromoro.dto.UserRequestDTO;
 import com.ermr.eromoro.dto.UserResponseDTO;
 
@@ -43,6 +44,12 @@ public class UserConverter {
     public static UserResponseDTO.SignUpExceptionDTO toSignUpExceptionDTO (Integer flag) {
         return UserResponseDTO.SignUpExceptionDTO.builder()
                 .flag(flag)
+                .build();
+    }
+
+    public static UserResponseDTO.CheckUsernameIsSameResultDTO toCheckUsernameIsSameResultDTO(IsAvailable isAvailable) {
+        return UserResponseDTO.CheckUsernameIsSameResultDTO.builder()
+                .isAvailable(isAvailable)
                 .build();
     }
 }

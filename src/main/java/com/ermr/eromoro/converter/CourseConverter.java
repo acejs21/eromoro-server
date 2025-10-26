@@ -4,6 +4,8 @@ import com.ermr.eromoro.domain.Course;
 import com.ermr.eromoro.domain.CoursePoint;
 import com.ermr.eromoro.domain.User;
 import com.ermr.eromoro.domain.enums.CourseType;
+import com.ermr.eromoro.domain.enums.UserType;
+import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.dto.CourseResponseDto;
 
 import java.util.List;
@@ -23,26 +25,35 @@ public class CourseConverter {
                 .build();
     }
 
-    public static CourseResponseDto.getCourseListResultDto toGetCourseListResultDto(
-            List<Course> courseList,
-            CourseType courseType
+    public static CourseResponseDto.getCourseListResultDto courseListToGetCourseListResultDto(
+            List<Course> courseList
     ) {
         List<CourseResponseDto.getCourseResultDto> mapped = courseList.stream()
                 .map(course -> CourseResponseDto.getCourseResultDto.builder()
-                        .profileImage(course.getUser().getProfileImage()) // User 연관에서 프로필 이미지 추출 가정
+                        .courseId(course.getId())
                         .title(course.getTitle())
                         .likeCount(course.getLikeCount())
+                        .isLiked(true)
                         .rampCount(course.getRampCount())
                         .stepCount(course.getStepCount())
                         .duration(course.getDuration())
                         .distance(course.getDistance())
                         .createdAt(course.getCreatedAt())
-                        .isPublic(courseType == CourseType.LIKE || courseType == CourseType.SPOT ? null : course.isPublic())
+                        .rating(null)
+                        .userType(null)
                         .build())
                 .toList();
 
         return CourseResponseDto.getCourseListResultDto.builder()
                 .courseList(mapped)
+                .build();
+    }
+
+    public static CourseResponseDto.getCourseListResultDto getCourseResultDtoToGetCourseListResultDto(
+            List<CourseResponseDto.getCourseResultDto> getCourseResultDtoList
+    ) {
+        return CourseResponseDto.getCourseListResultDto.builder()
+                .courseList(getCourseResultDtoList)
                 .build();
     }
 
@@ -70,6 +81,13 @@ public class CourseConverter {
                                 .longitude(p.getLongitude())
                                 .build())
                         .collect(Collectors.toList()))
+                .build();
+    }
+
+    public static CourseResponseDto.updateLikeStatusResultDto toUpdateLikeStatusResultDto(boolean isLiked, int likeCount) {
+        return CourseResponseDto.updateLikeStatusResultDto.builder()
+                .isLiked(isLiked)
+                .likeCount(likeCount)
                 .build();
     }
 }

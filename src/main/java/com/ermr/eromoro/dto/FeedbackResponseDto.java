@@ -38,6 +38,7 @@ public class FeedbackResponseDto {
         String address;
         int likeCount;
         int dislikeCount;
+        boolean isLiked;
         LocalDateTime createdAt;
     }
 
@@ -48,23 +49,33 @@ public class FeedbackResponseDto {
     public static class MyFeedbacksResultDto {
         List<MyFeedbackDto> feedbacks;
 //        int totalCount;
+    }
 
-        @Builder
-        @Getter
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class MyFeedbackDto {
-            Long feedbackId;
-//            Long emdAreaId;
-            String photoUrl;
-            String title;
-            String address;
-            FeedbackType type;
-            LocalDateTime createdAt;
-            int likeCount;
-            int dislikeCount;
-            Boolean isReport;
-            Boolean accepted;
-        }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyFeedbackDto {
+        Long feedbackId;
+        //            Long emdAreaId;
+        String photoUrl;
+        String title;
+        String address;
+        FeedbackType type;
+        LocalDateTime createdAt;
+        int likeCount;
+        int dislikeCount;
+        Boolean isReport;
+        Boolean accepted;
+        boolean isLiked;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class updateLikeStatusResultDto {
+        boolean isLiked;
+        int likeCount;
     }
 }

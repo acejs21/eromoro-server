@@ -23,6 +23,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Feedback 관련 에러
     FEEDBACK_NOT_FOUND(HttpStatus.BAD_REQUEST, "FEEDBACK4001", "피드백을 찾을 수 없습니다."),
+    FEEDBACK_ALREADY_LIKED(HttpStatus.BAD_REQUEST, "FEEDBACK4002", "이미 좋아요를 누른 피드백입니다."),
+    FEEDBACK_NOT_LIKED(HttpStatus.BAD_REQUEST, "FEEDBACK4003", "좋아요를 누르지 않은 피드백입니다."),
+    FEEDBACK_NOT_AUTHORIZED(HttpStatus.FORBIDDEN, "FEEDBACK4004", "피드백에 대한 권한이 없습니다."),
 
     // 인가 관련 에러
     AUTHORIZATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "AUTHORIZATION4001", "인증에 실패하였습니다."),
@@ -37,6 +40,11 @@ public enum ErrorStatus implements BaseErrorCode {
     COURSE_NOT_FOUND(HttpStatus.BAD_REQUEST, "COURSE4001", "코스를 찾을 수 없습니다."),
     COURSE_NOT_AUTHORIZED(HttpStatus.FORBIDDEN, "COURSE4002", "코스에 대한 권한이 없습니다."),
     INVALID_COURSE_TYPE(HttpStatus.BAD_REQUEST, "COURSE4003", "유효하지 않은 코스 타입입니다."),
+    COURSE_ALREADY_LIKED(HttpStatus.BAD_REQUEST, "COURSE4004", "이미 좋아요를 누른 코스입니다."),
+    COURSE_NOT_LIKED(HttpStatus.BAD_REQUEST, "COURSE4005", "좋아요를 누르지 않은 코스입니다."),
+
+    // 관광지 관련 에러
+    SPOT_NOT_FOUND(HttpStatus.BAD_REQUEST, "SPOT4001", "관광지를 찾을 수 없습니다."),
 
     // 이미지 관련 에러
     IMAGE_FAIL(HttpStatus.BAD_REQUEST, "IMAGE4001", "이미지 업로드 중 오류가 발생했습니다.");
