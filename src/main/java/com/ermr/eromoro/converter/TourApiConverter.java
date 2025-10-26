@@ -39,7 +39,7 @@ public class TourApiConverter {
                                 .siggArea(siggArea)
                                 .title(item.getTitle())
                                 .address(item.getAddr1() + " " + item.getAddr2())
-                                .contentType(convertContentType(item.getContenttypeid()))
+                                .contentType(convertContentType(item.getContenttypeid(), item.getCat2()))
                                 .imageUrl(item.getFirstimage())
                                 .contentId(item.getContentid())
                                 .build())
@@ -47,9 +47,18 @@ public class TourApiConverter {
                 .block();
     }
 
-    private static ContentType convertContentType(String contentTypeId) {
+    private static ContentType convertContentType(String contentTypeId, String cat2) {
         return switch (contentTypeId) {
-            case "12" -> ContentType.TOURIST_ATTRACTION;
+            case "12" -> switch (cat2) {
+                case "A0101" -> ContentType.NATURE;
+                case "A0102" -> ContentType.TOURISM_RESOURCE;
+                case "A0201" -> ContentType.HISTORICAL_SITE;
+                case "A0202" -> ContentType.RESORT;
+                case "A0203" -> ContentType.EXPERIENCE;
+                case "A0204" -> ContentType.INDUSTRIAL;
+                case "A0205" -> ContentType.ARCHITECTURE_SCULPTURE;
+                default      -> ContentType.TOURIST_ATTRACTION;
+            };
             case "14" -> ContentType.CULTURAL_FACILITY;
             case "15" -> ContentType.FESTIVAL;
 //            case "25" -> ContentType.TRAVEL_COURSE;

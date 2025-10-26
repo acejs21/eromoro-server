@@ -44,6 +44,9 @@ public class Spot {
     private String contentId;
 
     @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL)
+    private List<Course> courseList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL)
     private List<SpotImage> spotImageList = new ArrayList<>();
 
     @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL)

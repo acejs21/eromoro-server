@@ -96,6 +96,7 @@ public class TourApiResponseDto {
             private String addr1;
             private String addr2;
             private String contenttypeid;
+            private String cat2;
             private String firstimage;
         }
     }
