@@ -74,6 +74,7 @@ public class TourApiServiceImpl implements TourApiService {
             spotRepository.saveAll(spotList);
         });
 //        SiggArea siggArea = siggAreaRepository.findById(1405L).get();
+//        System.out.println(siggArea.getSidoArea().getName() + " - " + siggArea.getName());
 //        List<Spot> spotList = TourApiConverter.toSpot(
 //                siggArea,
 //                getAreaBasedSpotList(
@@ -81,13 +82,16 @@ public class TourApiServiceImpl implements TourApiService {
 //                        Integer.valueOf(siggArea.getCode())
 //                )
 //        );
+//        for (Spot spot : spotList) {
+//            System.out.println(spot.getTitle() + " - " + spot.getContentId());
+//        }
 //        spotRepository.saveAll(spotList);
     }
 
     @Override
     @Transactional
     public void collectInfoAndFacility() {
-        spotRepository.findAll().forEach(spot -> {
+        spotRepository.findTop800By().forEach(spot -> {
             // 관광지 상세 정보 업데이트
             TourApiResponseDto.TourOverviewApiResponse responseDto =
                     getDetailCommon(spot.getContentId())
@@ -96,7 +100,7 @@ public class TourApiServiceImpl implements TourApiService {
             if (responseDto != null) {
                 spot.updateInfo(responseDto.getResponse().getBody().getItems().getItem().get(0).getOverview());
             }
-            // 관광지 시설 정보 추가
+            // 관광지 시설 정보 추가 (무장애 여행 시설 정보)
             TourApiResponseDto.TourBarrierFreeApiResponse barrierFreeDto =
                     getDetailWithBarrierFreeTour(spot.getContentId())
                             .blockOptional()
@@ -193,7 +197,7 @@ public class TourApiServiceImpl implements TourApiService {
                         .queryParam("MobileApp", "eromoro")
                         .queryParam("_type", "json")
                         .queryParam("serviceKey", serviceKey)
-                        .queryParam("numOfRows", 1)
+                        .queryParam("numOfRows", 30)
                         .queryParamIfPresent("areaCode",     java.util.Optional.ofNullable(areaCode))
                         .queryParamIfPresent("sigunguCode",  java.util.Optional.ofNullable(sigunguCode))
                         .build())

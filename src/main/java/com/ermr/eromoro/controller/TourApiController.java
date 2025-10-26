@@ -1,7 +1,6 @@
 package com.ermr.eromoro.controller;
 
 import com.ermr.eromoro.apiResponse.ApiResponse;
-import com.ermr.eromoro.service.SpotCommandService;
 import com.ermr.eromoro.service.TourApiService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
