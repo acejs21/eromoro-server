@@ -3,6 +3,8 @@ package com.ermr.eromoro.util;
 import com.ermr.eromoro.dto.CourseRequestDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -14,6 +16,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -89,6 +92,44 @@ public class OsrmClient {
         }
 
         return new RouteResult(distance, duration, points);
+    }
+
+    public RouteResult route(List<CourseRequestDto.LatLon> waypoints) {
+        // OSRM route API는 "lon,lat;lon,lat;..." 형태 (주의: 경도,위도 순서)
+        String coords = waypoints.stream()
+                .map(p -> p.getLon().toPlainString() + "," + p.getLat().toPlainString())
+                .collect(Collectors.joining(";"));
+
+        String url = String.format("%s/route/v1/%s/%s?overview=full&geometries=geojson&steps=false",
+                baseUrl, profile, coords);
+
+        String json = webClient.get().uri(url)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        // 필요한 필드만 매핑하는 경량 파서 (정확한 필드명은 OSRM 응답에 맞춰서)
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            JsonNode routes = root.path("routes");
+            if (!routes.isArray() || routes.isEmpty()) {
+                return null;
+            }
+            JsonNode r0 = routes.get(0);
+            double distance = r0.path("distance").asDouble();      // meters
+            double duration = r0.path("duration").asDouble();      // seconds
+
+            List<CourseRequestDto.LatLon> geometry = new ArrayList<>();
+            for (JsonNode coord : r0.path("geometry").path("coordinates")) {
+                BigDecimal lon = new BigDecimal(coord.get(0).asText());
+                BigDecimal lat = new BigDecimal(coord.get(1).asText());
+                geometry.add(new CourseRequestDto.LatLon(lat, lon));
+            }
+
+            return new RouteResult(distance, duration, geometry);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private String encode(String s) {
