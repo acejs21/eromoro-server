@@ -104,4 +104,25 @@ public class UserController {
         userCommandService.updateUserInfo(userId, request);
         return ApiResponse.onSuccess("");
     }
+
+    @Operation(summary = "회원 정보 조회 [v1.0 (2025-10-26)]", description =
+            "# [v1.0 (2025-10-26)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=2985335b20728014be1ed0bf71be7a1a&pm=s)" +
+                    " 회원 정보 조회 API 입니다."
+    )
+    @GetMapping("/info")
+    public ApiResponse<UserResponseDTO.GetUserInfoResultDTO> getUserInfo() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        User user = userQueryService.getUserInfo(userId);
+        return ApiResponse.onSuccess(UserConverter.toUserInfo(user));
+    }
+
+    @Operation(summary = "마이페이지 회원 정보 조회 [v1.0 (2025-10-26)]", description =
+            "# [v1.0 (2025-10-26)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=24b5335b20728168bf4cc0c5d8aadf53&pm=s)" +
+                    " 마이페이지 회원 정보 조회 API 입니다. 현재 로그인한 회원의 마이페이지의 모든 정보를 조회합니다."
+    )
+    @GetMapping("/mypage")
+    public ApiResponse<UserResponseDTO.GetMyPageInfoResultDTO> getMyPageInfo() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        return ApiResponse.onSuccess(userQueryService.getMyPageInfo(userId));
+    }
 }
