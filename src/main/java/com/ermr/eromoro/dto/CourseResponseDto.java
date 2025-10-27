@@ -62,7 +62,26 @@ public class CourseResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GenerateResultDto {
-        List<Course> courses;
+        List<CourseSimpleDto> courses;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CourseSimpleDto {
+        private Long id;
+        private String title;
+        private int duration;     // 분
+        private float distance;   // km (소수 1자리)
+        private List<PointDto> geometry;  // 경로 좌표들 (seq 순)
+
+        @Getter
+        @AllArgsConstructor
+        public static class PointDto {
+            private BigDecimal lat;
+            private BigDecimal lon;
+        }
     }
 
     @Getter
