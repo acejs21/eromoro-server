@@ -42,6 +42,7 @@ public class CourseConverter {
                         .createdAt(course.getCreatedAt())
                         .rating(null)
                         .userType(null)
+                        .photo(course.getSpot() != null ? course.getSpot().getImageUrl() : null)
                         .build())
                 .toList();
 
