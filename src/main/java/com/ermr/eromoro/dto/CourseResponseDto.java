@@ -74,13 +74,15 @@ public class CourseResponseDto {
         private String title;
         private int duration;     // 분
         private float distance;   // km (소수 1자리)
-        private List<PointDto> geometry;  // 경로 좌표들 (seq 순)
+        private List<PointDto> points;  // 경로 좌표들 (seq 순)
 
         @Getter
         @AllArgsConstructor
         public static class PointDto {
+            private int seq;
             private BigDecimal lat;
             private BigDecimal lon;
+            private String slope;
         }
     }
 

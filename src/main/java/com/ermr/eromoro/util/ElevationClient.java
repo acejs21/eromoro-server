@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import static java.lang.Math.*;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class ElevationClient {
 
     private final WebClient webClient = WebClient.builder().build();
 
-    @Value("${opentopo.base-url:https://api.opentopodata.org/v1}")
+    @Value("${opentopo.base-url:https://api.opentopodata.org/}")
     private String baseUrl;
 
     /** 사용하려는 데이터셋 이름 (예: aster30m, srtm90m, etopo1, gebco2020) */
@@ -55,7 +56,7 @@ public class ElevationClient {
     private int readTimeoutMs;
 
     /** 공개 API 제약에 맞춘 배치 크기 */
-    public static final int MAX_LOCATIONS_PER_REQUEST = 100;
+    public static final int MAX_LOCATIONS_PER_REQUEST = 40;
 
     /**
      * 단일 지점 고도 조회
@@ -84,7 +85,7 @@ public class ElevationClient {
 
             // 공개 API는 초당 1회 권장. 내부에서 짧게 sleep 하여 예의상 조절(필요시 비활성화 가능)
             try {
-                Thread.sleep(1050L);
+                Thread.sleep(200L);
             } catch (InterruptedException ignored) {}
         }
         return out;
@@ -101,7 +102,8 @@ public class ElevationClient {
                 .pathSegment("v1", dataset)
                 .queryParam("locations", locationsParam)
                 // 필요시 nodata_value, interpolation, units 등 파라미터 추가 가능
-                .build(true)
+                .build(false)
+                .encode(StandardCharsets.UTF_8)
                 .toUri();
 
         JsonNode json = webClient.get()
