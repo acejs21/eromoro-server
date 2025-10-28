@@ -3,14 +3,15 @@ package com.ermr.eromoro.converter;
 import com.ermr.eromoro.domain.Feedback;
 import com.ermr.eromoro.dto.FeedbackRequestDto;
 import com.ermr.eromoro.dto.FeedbackResponseDto;
+import org.locationtech.jts.geom.Point;
 
+import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FeedbackConverter {
 
-    public static Feedback toFeedback(FeedbackRequestDto.CreateDto request) {
-
+    public static Feedback toFeedback(FeedbackRequestDto.CreateDto request, Point location) {
         return Feedback.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
@@ -20,6 +21,7 @@ public class FeedbackConverter {
                 .accepted(false) // 기본값 false
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
+                .location(location)
                 .address(request.getAddress())
                 .likeCount(0)
                 .dislikeCount(0)

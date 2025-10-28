@@ -1,6 +1,7 @@
 package com.ermr.eromoro.dto;
 
 import com.ermr.eromoro.domain.Course;
+import com.ermr.eromoro.domain.Feedback;
 import com.ermr.eromoro.domain.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -80,6 +81,8 @@ public class CourseResponseDto {
         int duration;
         float distance;
         List<PointDto> points;
+        List<FeedbackDto> feedbacks;
+        List<BarrierDto> barriers;
     }
 
     @Getter
@@ -88,6 +91,27 @@ public class CourseResponseDto {
     @AllArgsConstructor
     public static class PointDto {
         int seq;
+        BigDecimal latitude;
+        BigDecimal longitude;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FeedbackDto {
+        Long feedbackId;
+        BigDecimal latitude;
+        BigDecimal longitude;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BarrierDto {
+        Long barrierId;
+        String imageUrl;
         BigDecimal latitude;
         BigDecimal longitude;
     }

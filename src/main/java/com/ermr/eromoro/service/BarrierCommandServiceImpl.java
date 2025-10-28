@@ -4,6 +4,7 @@ import com.ermr.eromoro.domain.Barrier;
 import com.ermr.eromoro.domain.enums.BarrierType;
 import com.ermr.eromoro.dto.BarrierRequestDto;
 import com.ermr.eromoro.dto.StepAnalyzeFastApiResponseDto;
+import com.ermr.eromoro.location.GeoHelper;
 import com.ermr.eromoro.repository.BarrierRepository;
 import com.ermr.eromoro.util.NcpObjectStorageClient;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class BarrierCommandServiceImpl implements BarrierCommandService {
     private final WebClient.Builder webClientBuilder;
     private final BarrierRepository barrierRepository;
     private final NcpObjectStorageClient storage;
+    private final GeoHelper geoHelper;
 
     @Override
     public void collectAndSaveStepData(Long userId, List<MultipartFile> photos, List<BarrierRequestDto.StepDataPhotoMetaDataDto> request) {
@@ -127,6 +129,7 @@ public class BarrierCommandServiceImpl implements BarrierCommandService {
                     .course(null) // 필요 시 코스 연결하세요
                     .latitude(meta.getLatitude())
                     .longitude(meta.getLongitude())
+                    .location(geoHelper.toPoint(meta.getLongitude().doubleValue(), meta.getLatitude().doubleValue()))
                     .barrierType(BarrierType.STEP)
                     .image(imageUrl) // 필요 시 파일명/경로 저장
                     .build();
