@@ -1,11 +1,12 @@
 package com.ermr.eromoro.converter;
 
+import com.ermr.eromoro.domain.LikeCourse;
 import com.ermr.eromoro.domain.User;
 import com.ermr.eromoro.domain.enums.IsAvailable;
 import com.ermr.eromoro.dto.UserRequestDTO;
 import com.ermr.eromoro.dto.UserResponseDTO;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 public class UserConverter {
 
@@ -51,5 +52,39 @@ public class UserConverter {
         return UserResponseDTO.CheckUsernameIsSameResultDTO.builder()
                 .isAvailable(isAvailable)
                 .build();
+    }
+
+    public static UserResponseDTO.GetUserInfoResultDTO toUserInfo(User user) {
+        return UserResponseDTO.GetUserInfoResultDTO.builder()
+                .nickname(user.getNickname())
+                .username(user.getUsername())
+                .userType(user.getUserType())
+                .profileImage(user.getProfileImage())
+                .feedbackReward(user.getFeedbackReward())
+                .build();
+    }
+
+    public static UserResponseDTO.GetMyPageInfoResultDTO toGetMyPageInfoResultDTO(User getUser, int courseCount, List<LikeCourse> getLikeCourseList) {
+        List<UserResponseDTO.MyLikeCourseDTO> myLikeCourseDTOList = getLikeCourseList.stream()
+                .map(UserConverter::toMyLikeCourseDTO)
+                .toList();
+
+        return UserResponseDTO.GetMyPageInfoResultDTO.builder()
+                .nickname(getUser.getNickname())
+                .username(getUser.getUsername())
+                .userType(getUser.getUserType())
+                .profileImage(getUser.getProfileImage())
+                .feedbackReward(getUser.getFeedbackReward())
+                .courseCount(courseCount)
+                .myLikeCourseDTOList(myLikeCourseDTOList)
+                .build();
+    }
+
+    public static UserResponseDTO.MyLikeCourseDTO toMyLikeCourseDTO(LikeCourse likeCourse) {
+        return UserResponseDTO.MyLikeCourseDTO.builder()
+                .spotImage(likeCourse.getCourse().getSpot() != null ? likeCourse.getCourse().getSpot().getImageUrl() : null)
+                .courseTitle(likeCourse.getCourse().getTitle())
+                .build();
+
     }
 }

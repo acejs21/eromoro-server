@@ -42,6 +42,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_COURSE_TYPE(HttpStatus.BAD_REQUEST, "COURSE4003", "유효하지 않은 코스 타입입니다."),
     COURSE_ALREADY_LIKED(HttpStatus.BAD_REQUEST, "COURSE4004", "이미 좋아요를 누른 코스입니다."),
     COURSE_NOT_LIKED(HttpStatus.BAD_REQUEST, "COURSE4005", "좋아요를 누르지 않은 코스입니다."),
+    INVALID_COURSE_SPOT_ID(HttpStatus.BAD_REQUEST, "COURSE4006", "요청에 관광지 ID를 포함되지 않았습니다."),
 
     // 관광지 관련 에러
     SPOT_NOT_FOUND(HttpStatus.BAD_REQUEST, "SPOT4001", "관광지를 찾을 수 없습니다."),
