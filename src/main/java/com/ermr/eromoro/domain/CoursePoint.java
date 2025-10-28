@@ -41,6 +41,9 @@ public class CoursePoint {
     @Column(name = "longitude", precision = 10, scale = 6, nullable = false)
     private BigDecimal longitude;
 
+    @Column(name = "slope", nullable = true)
+    private String slope;
+
     /* 편의 메서드 */
     public void setCourse(Course newCourse) {
         // 0) 동일 대상이면 아무 것도 안 함
