@@ -2,9 +2,7 @@ package com.ermr.eromoro.controller;
 
 import com.ermr.eromoro.apiResponse.ApiResponse;
 import com.ermr.eromoro.converter.CourseConverter;
-import com.ermr.eromoro.domain.Course;
-import com.ermr.eromoro.domain.CoursePoint;
-import com.ermr.eromoro.domain.User;
+import com.ermr.eromoro.domain.*;
 import com.ermr.eromoro.domain.enums.CourseType;
 import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.dto.CourseResponseDto;
@@ -133,6 +131,8 @@ public class CourseController {
     ) {
         Course course = courseService.getCourse(courseId);
         List<CoursePoint> points = courseService.getCoursePointsOrdered(courseId);
-        return ApiResponse.onSuccess(CourseConverter.toCourseDetailDto(course, points));
+        List<Feedback> feedbacks = courseService.getCourseFeedbacks(points);
+        List<Barrier> barriers = courseService.getCourseBarriers(points);
+        return ApiResponse.onSuccess(CourseConverter.toCourseDetailDto(course, points, feedbacks, barriers));
     }
 }

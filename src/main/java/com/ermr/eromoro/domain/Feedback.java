@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.locationtech.jts.geom.Point;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -56,6 +57,9 @@ public class Feedback {
 
     @Column(name = "longitude", precision = 10, scale = 6, nullable = false)
     private BigDecimal longitude;
+
+    @Column(columnDefinition = "POINT SRID 4326")
+    private Point location; // Point(경도, 위도)
 
     @Column(name = "address", length = 200, nullable = false)
     private String address;

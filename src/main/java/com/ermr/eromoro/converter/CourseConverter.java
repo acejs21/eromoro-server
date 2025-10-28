@@ -1,8 +1,6 @@
 package com.ermr.eromoro.converter;
 
-import com.ermr.eromoro.domain.Course;
-import com.ermr.eromoro.domain.CoursePoint;
-import com.ermr.eromoro.domain.User;
+import com.ermr.eromoro.domain.*;
 import com.ermr.eromoro.domain.enums.CourseType;
 import com.ermr.eromoro.domain.enums.UserType;
 import com.ermr.eromoro.dto.CourseRequestDto;
@@ -63,7 +61,7 @@ public class CourseConverter {
                 .build();
     }
 
-    public static CourseResponseDto.CourseDetailDto toCourseDetailDto(Course course, List<CoursePoint> points) {
+    public static CourseResponseDto.CourseDetailDto toCourseDetailDto(Course course, List<CoursePoint> points, List<Feedback> feedbacks, List<Barrier> barriers) {
         return CourseResponseDto.CourseDetailDto.builder()
                 .id(course.getId())
                 .userId(course.getUser().getId())
@@ -79,6 +77,21 @@ public class CourseConverter {
                                 .seq(p.getSeq())
                                 .latitude(p.getLatitude())
                                 .longitude(p.getLongitude())
+                                .build())
+                        .collect(Collectors.toList()))
+                .feedbacks(feedbacks.stream()
+                        .map(f -> CourseResponseDto.FeedbackDto.builder()
+                                .feedbackId(f.getId())
+                                .latitude(f.getLatitude())
+                                .longitude(f.getLongitude())
+                                .build())
+                        .collect(Collectors.toList()))
+                .barriers(barriers.stream()
+                        .map(b -> CourseResponseDto.BarrierDto.builder()
+                                .barrierId(b.getId())
+                                .imageUrl(b.getImage())
+                                .latitude(b.getLatitude())
+                                .longitude(b.getLongitude())
                                 .build())
                         .collect(Collectors.toList()))
                 .build();

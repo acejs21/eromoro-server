@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
+import java.awt.*;
 import java.math.BigDecimal;
 
 @Entity
@@ -30,6 +32,9 @@ public class Barrier {
 
     @Column(name = "longitude", precision = 10, scale = 6, nullable = false)
     private BigDecimal longitude;
+
+    @Column(columnDefinition = "POINT SRID 4326")
+    private Point location; // Point(경도, 위도)
 
     @Enumerated(EnumType.STRING)
     @Column(name = "barrier_type", nullable = false)
