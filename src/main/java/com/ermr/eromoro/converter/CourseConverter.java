@@ -75,7 +75,7 @@ public class CourseConverter {
         List<CourseResponseDto.CourseSimpleDto.PointDto> geometry = points.stream()
                 .sorted(Comparator.comparingInt(CoursePoint::getSeq))
                 .map(p -> new CourseResponseDto.CourseSimpleDto.PointDto(
-                        p.getLatitude(), p.getLongitude()
+                        p.getSeq(), p.getLatitude(), p.getLongitude(), p.getSlope()
                 ))
                 .toList();
 
@@ -84,7 +84,7 @@ public class CourseConverter {
                 .title(c.getTitle())
                 .duration(c.getDuration())
                 .distance(c.getDistance())
-                .geometry(geometry)
+                .points(geometry)
                 .build();
     }
 

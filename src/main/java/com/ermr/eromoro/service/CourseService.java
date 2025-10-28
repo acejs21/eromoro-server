@@ -10,6 +10,7 @@ import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.repository.CoursePointRepository;
 import com.ermr.eromoro.repository.CourseRepository;
 import com.ermr.eromoro.repository.UserRepository;
+import com.ermr.eromoro.util.ElevationClient;
 import com.ermr.eromoro.util.OsrmClient;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CoursePointRepository coursePointRepository;
     private final OsrmClient osrmClient;
+    private final ElevationClient elevationClient;
     private final UserRepository userRepository;
 
     @Transactional
@@ -83,7 +85,137 @@ public class CourseService {
         }
 
         if (out.size() > TARGET_COUNT) out = out.subList(0, TARGET_COUNT);
+
+        // 생성 완료된 코스에 대해 경사 정보 주입
+        for (Course course : out) {
+            annotateSlopes(course);
+        }
         return out;
+    }
+
+    /**
+     * 코스의 포인트들에 대해 고도를 배치 조회하여
+     * 유의미한 오르막/내리막 구간의 시작/끝 포인트에 slope 문자열을 기록한다.
+     */
+    private void annotateSlopes(Course course) {
+        // 1) 포인트 조회 (seq 오름차순)
+        List<CoursePoint> points = coursePointRepository.findByCourseIdOrderBySeqAsc(course.getId());
+        if (points == null || points.size() < 2) return;
+
+        // 2) (lat,lon) → 배치 고도 조회
+        List<ElevationClient.ElevationPoint> req = new ArrayList<>(points.size());
+        for (CoursePoint p : points) {
+            req.add(new ElevationClient.ElevationPoint(
+                    p.getLatitude(), p.getLongitude(), null
+            ));
+        }
+        List<ElevationClient.ElevationPoint> elev = elevationClient.elevations(req);
+
+        // 3) 경사 판단 기준
+        final double MIN_RUN_METERS = 30.0;     // 너무 짧은 구간은 노이즈로 간주
+        final double SLOPE_PERCENT_THRESHOLD = 3.0; // |경사%| 3% 이상만 “유의미”
+
+        // 4) 기존 slope 초기화 (없으면 null 그대로)
+        for (CoursePoint p : points) {
+            p.setSlope(null);
+        }
+
+        // 5) 인접 구간별 경사율 계산 → 같은 방향 연속 구간 묶기
+        enum Dir { UP, DOWN, FLAT }
+        Dir currentDir = Dir.FLAT;
+        int segStartIdx = -1;
+
+        for (int i = 0; i < points.size() - 1; i++) {
+            ElevationClient.ElevationPoint a = elev.get(i);
+            ElevationClient.ElevationPoint b = elev.get(i + 1);
+
+            BigDecimal ea = a.getElevation();
+            BigDecimal eb = b.getElevation();
+
+            // 고도 없으면 해당 구간은 판단 불가 → FLAT 취급(세그먼트 종료)
+            Dir segDir = Dir.FLAT;
+            if (ea != null && eb != null) {
+                double run = haversineMeters(
+                        a.getLat().doubleValue(), a.getLon().doubleValue(),
+                        b.getLat().doubleValue(), b.getLon().doubleValue()
+                );
+                if (run >= MIN_RUN_METERS) {
+                    double rise = eb.doubleValue() - ea.doubleValue();
+                    double slopePercent = (rise / run) * 100.0;
+                    if (slopePercent >= SLOPE_PERCENT_THRESHOLD) {
+                        segDir = Dir.UP;
+                    } else if (slopePercent <= -SLOPE_PERCENT_THRESHOLD) {
+                        segDir = Dir.DOWN;
+                    }
+                }
+            }
+
+            // 상태 머신: 방향 전환/종료 시 마커 기록
+            if (currentDir == Dir.FLAT && segDir != Dir.FLAT) {
+                // 새 세그먼트 시작
+                currentDir = segDir;
+                segStartIdx = i;
+            } else if (currentDir != Dir.FLAT && segDir != currentDir) {
+                // 세그먼트 끝남 (i가 직전 구간의 마지막 인덱스)
+                markSegment(points, currentDir, segStartIdx, i);
+                // 다음 상태로
+                if (segDir == Dir.FLAT) {
+                    currentDir = Dir.FLAT;
+                    segStartIdx = -1;
+                } else {
+                    currentDir = segDir;
+                    segStartIdx = i; // 현재 구간부터 새로 시작
+                }
+            }
+        }
+
+        // 루프 종료 후 열린 세그먼트가 남아있다면 끝까지 마감
+        if (currentDir != Dir.FLAT && segStartIdx >= 0) {
+            markSegment(points, currentDir, segStartIdx, points.size() - 1);
+        }
+
+        // 6) 저장
+        coursePointRepository.saveAll(points);
+    }
+
+    /**
+     * 세그먼트를 시작/끝 포인트에만 마킹한다.
+     * ex) UP → "UPHILL START" / "UPHILL END"
+     */
+    private void markSegment(List<CoursePoint> points, Enum<?> dir, int startIdx, int endIdxInclusive) {
+        if (startIdx < 0 || endIdxInclusive < startIdx || endIdxInclusive >= points.size()) return;
+
+        String startLabel;
+        String endLabel;
+        if (dir.name().equals("UP")) {
+            startLabel = "UPHILL START";
+            endLabel   = "UPHILL END";
+        } else {
+            startLabel = "DOWNHILL START";
+            endLabel   = "DOWNHILL END";
+        }
+
+        // 시작 포인트
+        CoursePoint start = points.get(startIdx);
+        start.setSlope(startLabel);
+
+        // 끝 포인트
+        CoursePoint end = points.get(endIdxInclusive);
+        end.setSlope(endLabel);
+    }
+
+    /**
+     * Haversine (미터)
+     */
+    private double haversineMeters(double lat1, double lon1, double lat2, double lon2) {
+        final double R = 6371008.8; // WGS84 평균 반경(m)
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 
     // 라우팅 → 검증 → 정규화 → 저장
