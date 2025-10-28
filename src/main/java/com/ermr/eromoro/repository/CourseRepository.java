@@ -12,6 +12,7 @@ import java.util.List;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
+
     @Query("""
     select new com.ermr.eromoro.dto.CourseResponseDto$getCourseResultDto(
       c.id,
@@ -29,10 +30,14 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
       c.createdAt,
       null,
       null,
-      null 
+      case
+        when s is null or s.imageUrl is null or s.imageUrl = '' then null
+        else s.imageUrl 
+      end
     )
     from Course c
       join c.user u
+      left join c.spot s
     where u.id = :userId
     order by c.createdAt desc
     """)
@@ -57,10 +62,14 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
       c.createdAt,
       null,
       null,
-      null
+      case
+        when s is null or s.imageUrl is null or s.imageUrl = '' then null
+        else s.imageUrl 
+      end
     )
     from Course c
       join c.user u
+      left join c.spot s
     where u.id = :userId
       and lower(c.title) like lower(concat('%', :keyword, '%'))
     order by c.createdAt desc
@@ -68,4 +77,62 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<CourseResponseDto.getCourseResultDto> findByUserWithLikeCourseAndTitleContainingOrderByCreatedAtDesc(
             @Param("userId") Long userId,
             @Param("keyword") String keyword
-    );}
+    );
+
+    int countByUser(User getUser);
+
+    @Query("""
+    select new com.ermr.eromoro.dto.CourseResponseDto$getCourseResultDto(
+      c.id,
+      c.title,
+      c.likeCount,
+      case when exists (
+        select 1 from LikeCourse lc
+         where lc.course = c
+           and lc.user.id = :userId
+      ) then true else false end,
+      c.rampCount,
+      c.stepCount,
+      c.duration,
+      c.distance,
+      c.createdAt,
+      c.rating,
+      u.userType,
+      null
+    )
+    from Course c
+      left join c.user u
+      join c.spot s
+    where s.id = :spotId
+    order by c.createdAt desc
+    """)
+    List<CourseResponseDto.getCourseResultDto> findBySpotWithLikeCourseOrderByCreatedAtDesc(Long userId, Long spotId);
+
+    @Query("""
+    select new com.ermr.eromoro.dto.CourseResponseDto$getCourseResultDto(
+      c.id,
+      c.title,
+      c.likeCount,
+      case when exists (
+        select 1 from LikeCourse lc
+         where lc.course = c
+           and lc.user.id = :userId
+      ) then true else false end,
+      c.rampCount,
+      c.stepCount,
+      c.duration,
+      c.distance,
+      c.createdAt,
+      c.rating,
+      u.userType,
+      null
+    )
+    from Course c
+      left join c.user u
+      join c.spot s
+    where s.id = :spotId
+    and lower(c.title) like lower(concat('%', :keyword, '%'))
+    order by c.createdAt desc
+    """)
+    List<CourseResponseDto.getCourseResultDto> findBySpotWithLikeCourseAndTitleContainingOrderByCreatedAtDesc(Long userId, Long spotId, String keyword);
+}

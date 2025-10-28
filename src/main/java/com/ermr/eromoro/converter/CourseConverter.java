@@ -6,6 +6,7 @@ import com.ermr.eromoro.domain.enums.UserType;
 import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.dto.CourseResponseDto;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ public class CourseConverter {
                         .createdAt(course.getCreatedAt())
                         .rating(null)
                         .userType(null)
+                        .photo(course.getSpot() != null ? course.getSpot().getImageUrl() : null)
                         .build())
                 .toList();
 
@@ -56,8 +58,32 @@ public class CourseConverter {
     }
 
     public static CourseResponseDto.GenerateResultDto toGenerateResultDto(List<Course> courseList) {
+        List<CourseResponseDto.CourseSimpleDto> dtos = courseList.stream()
+                .map(CourseConverter::toCourseSimpleDto)
+                .toList();
+
         return CourseResponseDto.GenerateResultDto.builder()
-                .courses(courseList)
+                .courses(dtos)
+                .build();
+    }
+
+    private static CourseResponseDto.CourseSimpleDto toCourseSimpleDto(Course c) {
+        // 포인트 컬렉션 이름/타입은 프로젝트에 맞게 조정하세요.
+        // 예: c.getPoints() 또는 c.getCoursePoints()
+        List<CoursePoint> points = c.getCoursePointList(); // ← 필요 시 getter 명 수정
+        List<CourseResponseDto.CourseSimpleDto.PointDto> geometry = points.stream()
+                .sorted(Comparator.comparingInt(CoursePoint::getSeq))
+                .map(p -> new CourseResponseDto.CourseSimpleDto.PointDto(
+                        p.getSeq(), p.getLatitude(), p.getLongitude(), p.getSlope()
+                ))
+                .toList();
+
+        return CourseResponseDto.CourseSimpleDto.builder()
+                .id(c.getId())
+                .title(c.getTitle())
+                .duration(c.getDuration())
+                .distance(c.getDistance())
+                .points(geometry)
                 .build();
     }
 
