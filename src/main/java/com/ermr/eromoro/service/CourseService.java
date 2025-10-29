@@ -81,7 +81,9 @@ public class CourseService {
             if (r == null) break;
             if (!endsNear(r, routingEnd, TOL_M)) break;
             List<CourseRequestDto.LatLon> norm = normalizeEndpoints(r.getGeometry(), startOrig, endOrig);
-            out.add(buildAndSaveCourse(user, startOrig, endOrig, r, norm));
+
+            int nextIndex = out.size() + 1;
+            out.add(buildAndSaveCourse(user, r, norm, nextIndex));
         }
 
         if (out.size() > TARGET_COUNT) out = out.subList(0, TARGET_COUNT);
@@ -232,7 +234,9 @@ public class CourseService {
         if (r == null || r.getGeometry() == null || r.getGeometry().size() < 2) return;
         if (!endsNear(r, routingEnd, tolM)) return; // 종착 검증 실패 시 폐기
         List<CourseRequestDto.LatLon> normalized = normalizeEndpoints(r.getGeometry(), startOrig, endOrig);
-        bucket.add(buildAndSaveCourse(user, startOrig, endOrig, r, normalized));
+        
+        int nextIndex = bucket.size() + 1;
+        bucket.add(buildAndSaveCourse(user, r, normalized, nextIndex));
     }
 
     // 종착 검증: 라우팅 결과 마지막 점이 스냅 종착점과 tolM 이내?
@@ -310,10 +314,9 @@ public class CourseService {
 
     // 저장 시, 라우팅의 거리/시간은 그대로 쓰되, geometry는 정규화된 것 사용
     private Course buildAndSaveCourse(User user,
-                                      CourseRequestDto.LatLon startOrig,
-                                      CourseRequestDto.LatLon endOrig,
                                       OsrmClient.RouteResult route,
-                                      List<CourseRequestDto.LatLon> normalizedGeom) {
+                                      List<CourseRequestDto.LatLon> normalizedGeom,
+                                      int index) {
 
         float distanceKm = BigDecimal.valueOf(route.getDistanceMeters())
                 .divide(BigDecimal.valueOf(1000), 1, RoundingMode.HALF_UP)
@@ -322,7 +325,7 @@ public class CourseService {
 
         Course course = Course.builder()
                 .user(user)
-                .title(buildCourseTitle(startOrig, endOrig)) // 타이틀도 요청 좌표 기준
+                .title("추천 코스" + index)
                 .likeCount(0)
                 .isPublic(false)
                 .duration(durationMin)
@@ -339,14 +342,6 @@ public class CourseService {
             cp.setCourse(course);
         }
         return courseRepository.save(course);
-    }
-
-    private String buildCourseTitle(CourseRequestDto.LatLon start, CourseRequestDto.LatLon end) {
-        return String.format("Course (%.5f, %.5f) → (%.5f, %.5f)",
-                start.getLat().doubleValue(),
-                start.getLon().doubleValue(),
-                end.getLat().doubleValue(),
-                end.getLon().doubleValue());
     }
 
     @Transactional(readOnly = true)
