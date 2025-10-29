@@ -46,6 +46,7 @@ public class BarrierQueryServiceImpl implements BarrierQueryService {
     public List<Feedback> getPagingFeedbacks(BarrierRequestDto.GetPagingBarrierDto request) {
         Coordinate[] coordinates = getCoordinatesFromPoints(request);
         Polygon boundingBox = geometryFactory.createPolygon(coordinates);
+        boundingBox.setSRID(4326);
         return feedbackRepository.findByLocationWithin(boundingBox);
     }
 
@@ -53,6 +54,7 @@ public class BarrierQueryServiceImpl implements BarrierQueryService {
     public List<Barrier> getPagingBarriers(BarrierRequestDto.GetPagingBarrierDto request) {
         Coordinate[] coordinates = getCoordinatesFromPoints(request);
         Polygon boundingBox = geometryFactory.createPolygon(coordinates);
+        boundingBox.setSRID(4326);
         return barrierRepository.findByLocationWithin(boundingBox);
     }
 
