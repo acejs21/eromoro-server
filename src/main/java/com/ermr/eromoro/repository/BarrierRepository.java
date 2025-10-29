@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface BarrierRepository extends JpaRepository<Barrier, Long> {
-    @Query("SELECT b FROM Barrier b WHERE within(b.location, :expandedBoundingBox) = true")
-    List<Barrier> findByLocationWithin(Polygon expandedBoundingBox);
+    @Query("SELECT b FROM Barrier b WHERE within(b.location, :boundingBox) = true")
+    List<Barrier> findByLocationWithin(Polygon boundingBox);
 }

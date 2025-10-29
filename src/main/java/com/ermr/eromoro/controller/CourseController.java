@@ -131,8 +131,8 @@ public class CourseController {
     ) {
         Course course = courseService.getCourse(courseId);
         List<CoursePoint> points = courseService.getCoursePointsOrdered(courseId);
-        List<Feedback> feedbacks = courseService.getCourseFeedbacks(points);
-        List<Barrier> barriers = courseService.getCourseBarriers(points);
-        return ApiResponse.onSuccess(CourseConverter.toCourseDetailDto(course, points, feedbacks, barriers));
+//        List<Feedback> feedbacks = courseService.getCourseFeedbacks(points);
+//        List<Barrier> barriers = courseService.getCourseBarriers(points);
+        return ApiResponse.onSuccess(CourseConverter.toCourseDetailDto(course, points));
     }
 }

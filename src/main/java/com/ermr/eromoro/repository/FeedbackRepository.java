@@ -38,6 +38,6 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     """)
     List<FeedbackResponseDto.MyFeedbackDto> findAllByUserIdWithLikeFeedback(@Param("userId") Long userId);
 
-    @Query("SELECT f FROM Feedback f WHERE within(f.location, :expandedBoundingBox) = true")
-    List<Feedback> findByLocationWithin(Polygon expandedBoundingBox);
+    @Query("SELECT f FROM Feedback f WHERE within(f.location, :boundingBox) = true")
+    List<Feedback> findByLocationWithin(Polygon boundingBox);
 }

@@ -1,9 +1,6 @@
 package com.ermr.eromoro.converter;
 
 import com.ermr.eromoro.domain.*;
-import com.ermr.eromoro.domain.enums.CourseType;
-import com.ermr.eromoro.domain.enums.UserType;
-import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.dto.CourseResponseDto;
 
 import java.util.Comparator;
@@ -71,9 +68,9 @@ public class CourseConverter {
         // 포인트 컬렉션 이름/타입은 프로젝트에 맞게 조정하세요.
         // 예: c.getPoints() 또는 c.getCoursePoints()
         List<CoursePoint> points = c.getCoursePointList(); // ← 필요 시 getter 명 수정
-        List<CourseResponseDto.CourseSimpleDto.PointDto> geometry = points.stream()
+        List<CourseResponseDto.CourseSimpleDto.GeneratePointDto> geometry = points.stream()
                 .sorted(Comparator.comparingInt(CoursePoint::getSeq))
-                .map(p -> new CourseResponseDto.CourseSimpleDto.PointDto(
+                .map(p -> new CourseResponseDto.CourseSimpleDto.GeneratePointDto(
                         p.getSeq(), p.getLatitude(), p.getLongitude(), p.getSlope()
                 ))
                 .toList();
@@ -87,7 +84,7 @@ public class CourseConverter {
                 .build();
     }
 
-    public static CourseResponseDto.CourseDetailDto toCourseDetailDto(Course course, List<CoursePoint> points, List<Feedback> feedbacks, List<Barrier> barriers) {
+    public static CourseResponseDto.CourseDetailDto toCourseDetailDto(Course course, List<CoursePoint> points) {
         return CourseResponseDto.CourseDetailDto.builder()
                 .id(course.getId())
                 .userId(course.getUser().getId())
@@ -99,25 +96,10 @@ public class CourseConverter {
                 .duration(course.getDuration())
                 .distance(course.getDistance())
                 .points(points.stream()
-                        .map(p -> CourseResponseDto.PointDto.builder()
+                        .map(p -> CourseResponseDto.CourseDetailPointDto.builder()
                                 .seq(p.getSeq())
                                 .latitude(p.getLatitude())
                                 .longitude(p.getLongitude())
-                                .build())
-                        .collect(Collectors.toList()))
-                .feedbacks(feedbacks.stream()
-                        .map(f -> CourseResponseDto.FeedbackDto.builder()
-                                .feedbackId(f.getId())
-                                .latitude(f.getLatitude())
-                                .longitude(f.getLongitude())
-                                .build())
-                        .collect(Collectors.toList()))
-                .barriers(barriers.stream()
-                        .map(b -> CourseResponseDto.BarrierDto.builder()
-                                .barrierId(b.getId())
-                                .imageUrl(b.getImage())
-                                .latitude(b.getLatitude())
-                                .longitude(b.getLongitude())
                                 .build())
                         .collect(Collectors.toList()))
                 .build();
