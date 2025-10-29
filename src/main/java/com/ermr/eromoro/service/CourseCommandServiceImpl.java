@@ -7,6 +7,7 @@ import com.ermr.eromoro.converter.CourseConverter;
 import com.ermr.eromoro.converter.CoursePointConverter;
 import com.ermr.eromoro.converter.LikeCourseConverter;
 import com.ermr.eromoro.domain.*;
+import com.ermr.eromoro.domain.enums.CourseStatus;
 import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.dto.CourseResponseDto;
 import com.ermr.eromoro.repository.*;
@@ -28,10 +29,11 @@ public class CourseCommandServiceImpl implements CourseCommandService{
 
     @Override
     @Transactional
-    public void startCourse(Long userId) {
+    public void startCourse(Long userId, Long courseId) {
         User getUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         getUser.updateIsCourse();
+        courseRepository.deletePendingCoursesByUserIdExceptOne(CourseStatus.PENDING, courseId, userId);
     }
 
     @Override
@@ -62,6 +64,9 @@ public class CourseCommandServiceImpl implements CourseCommandService{
         Course savedCourse = courseRepository.save(newCourse);
         List<CoursePoint> newCoursePointList = CoursePointConverter.toCoursePointList(request, newCourse);
         coursePointRepository.saveAll(newCoursePointList);
+
+        // 진행중이던 추천코스 삭제
+        courseRepository.deletePendingCoursesByUserId(CourseStatus.PENDING, userId);
 
         return savedCourse;
     }

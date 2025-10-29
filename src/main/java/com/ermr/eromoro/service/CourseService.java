@@ -4,6 +4,7 @@ import com.ermr.eromoro.apiResponse.exception.handler.CourseHandler;
 import com.ermr.eromoro.apiResponse.exception.handler.UserHandler;
 import com.ermr.eromoro.apiResponse.status.ErrorStatus;
 import com.ermr.eromoro.domain.*;
+import com.ermr.eromoro.domain.enums.CourseStatus;
 import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.repository.*;
 import com.ermr.eromoro.util.OsrmClient;
@@ -328,6 +329,7 @@ public class CourseService {
                 .isPublic(false)
                 .duration(durationMin)
                 .distance(distanceKm)
+                .courseStatus(CourseStatus.PENDING)
                 .build();
 
         int seq = 0;

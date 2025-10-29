@@ -7,7 +7,7 @@ import com.ermr.eromoro.dto.CourseResponseDto;
 
 public interface CourseCommandService {
 
-    void startCourse(Long userId);
+    void startCourse(Long userId, Long courseId);
     User getIsCourseStatus(Long userId);
     Course saveCoursePointList(Long userId, Long spotId, CourseRequestDto.CoursePointListDto request);
     void saveCourseInfo(Long userId, Long courseId, CourseRequestDto.CourseInfoDto request);
