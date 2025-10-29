@@ -48,7 +48,7 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
                 EXISTS(SELECT 1 FROM Course c JOIN c.user u WHERE c.spot = s AND u.userType = com.ermr.eromoro.domain.enums.UserType.SENIOR),
                 EXISTS(SELECT 1 FROM Course c JOIN c.user u WHERE c.spot = s AND u.userType = com.ermr.eromoro.domain.enums.UserType.PREGNANT),
                 EXISTS(SELECT 1 FROM Course c JOIN c.user u WHERE c.spot = s AND u.userType = com.ermr.eromoro.domain.enums.UserType.INFANT_GUARDIAN),
-                EXISTS(SELECT 1 FROM Course c JOIN c.user u WHERE c.spot = s AND u.userType = com.ermr.eromoro.domain.enums.UserType.CHILD)
+                EXISTS(SELECT 1 FROM Course c JOIN c.user u WHERE c.spot = s AND u.userType = com.ermr.eromoro.domain.enums.UserType.USER)
             )
         )
         FROM Spot s

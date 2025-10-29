@@ -1,6 +1,7 @@
 package com.ermr.eromoro.domain;
 
 import com.ermr.eromoro.domain.common.BaseEntity;
+import com.ermr.eromoro.domain.enums.CourseStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -50,6 +51,9 @@ public class Course extends BaseEntity {
     private int rampCount;
 
     private int stepCount;
+
+    @Enumerated(EnumType.STRING)
+    private CourseStatus courseStatus;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("seq ASC")

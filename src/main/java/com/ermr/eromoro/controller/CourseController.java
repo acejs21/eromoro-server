@@ -2,9 +2,7 @@ package com.ermr.eromoro.controller;
 
 import com.ermr.eromoro.apiResponse.ApiResponse;
 import com.ermr.eromoro.converter.CourseConverter;
-import com.ermr.eromoro.domain.Course;
-import com.ermr.eromoro.domain.CoursePoint;
-import com.ermr.eromoro.domain.User;
+import com.ermr.eromoro.domain.*;
 import com.ermr.eromoro.domain.enums.CourseType;
 import com.ermr.eromoro.dto.CourseRequestDto;
 import com.ermr.eromoro.dto.CourseResponseDto;
@@ -31,10 +29,10 @@ public class CourseController {
             "# [v1.0 (2025-10-10)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=2645335b207280d680e3dadb83f6f52e&pm=s)" +
                     " 코스 시작 API 입니다. 회원의 코스 시작 status를 true로 바꿉니다."
     )
-    @PatchMapping()
-    public ApiResponse<?> startCourse(){
+    @PatchMapping("/{course-id}")
+    public ApiResponse<?> startCourse(@PathVariable("course-id") Long courseId){
         Long userId = SecurityUtil.getCurrentUserId();
-        courseCommandService.startCourse(userId);
+        courseCommandService.startCourse(userId, courseId);
         return ApiResponse.onSuccess("");
     }
 
@@ -141,6 +139,8 @@ public class CourseController {
     ) {
         Course course = courseService.getCourse(courseId);
         List<CoursePoint> points = courseService.getCoursePointsOrdered(courseId);
+//        List<Feedback> feedbacks = courseService.getCourseFeedbacks(points);
+//        List<Barrier> barriers = courseService.getCourseBarriers(points);
         return ApiResponse.onSuccess(CourseConverter.toCourseDetailDto(course, points));
     }
 }

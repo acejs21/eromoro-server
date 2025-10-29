@@ -40,7 +40,7 @@ public class SpotResponseDto {
         private boolean isSenior;
         private boolean isPregnant;
         private boolean isInfantGuardian;
-        private boolean isChild;
+        private boolean isUser;
     }
 
     @Getter

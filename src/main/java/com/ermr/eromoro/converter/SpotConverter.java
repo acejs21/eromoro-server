@@ -30,6 +30,7 @@ public class SpotConverter {
                 .information(getSpot.getInformation())
                 .imageUrl(getSpot.getImageUrl().equals("") ? null : getSpot.getImageUrl())
                 .facilityInfo(facilityInfoList)
+                .address(getSpot.getAddress())
                 .build();
     }
 }

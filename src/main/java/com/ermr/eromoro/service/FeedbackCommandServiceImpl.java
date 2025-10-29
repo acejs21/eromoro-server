@@ -11,6 +11,7 @@ import com.ermr.eromoro.converter.LikeFeedbackConverter;
 import com.ermr.eromoro.domain.*;
 import com.ermr.eromoro.dto.FeedbackRequestDto;
 import com.ermr.eromoro.dto.FeedbackResponseDto;
+import com.ermr.eromoro.location.GeoHelper;
 import com.ermr.eromoro.repository.FeedbackRepository;
 import com.ermr.eromoro.repository.LikeFeedbackRepository;
 import com.ermr.eromoro.repository.UserRepository;
@@ -34,12 +35,13 @@ public class FeedbackCommandServiceImpl implements FeedbackCommandService {
     private final UserRepository userRepository;
     private final NcpObjectStorageClient storage;
     private final LikeFeedbackRepository likeFeedbackRepository;
+    private final GeoHelper geoHelper;
 
     @Override
     public Feedback create(FeedbackRequestDto.CreateDto request, MultipartFile image, Long userId) {
         User getUser = userRepository.findById(userId) // 후에 null처리하기 (2025/10/06)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        Feedback newFeedback = FeedbackConverter.toFeedback(request);
+        Feedback newFeedback = FeedbackConverter.toFeedback(request, geoHelper.toPoint(request.getLatitude().doubleValue(), request.getLongitude().doubleValue()));
         newFeedback.setUser(getUser);
 
         // 이미지 저장
