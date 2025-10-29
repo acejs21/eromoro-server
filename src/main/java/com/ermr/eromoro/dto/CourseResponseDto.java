@@ -1,7 +1,5 @@
 package com.ermr.eromoro.dto;
 
-import com.ermr.eromoro.domain.Course;
-import com.ermr.eromoro.domain.Feedback;
 import com.ermr.eromoro.domain.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 public class CourseResponseDto {
@@ -75,11 +72,11 @@ public class CourseResponseDto {
         private String title;
         private int duration;     // 분
         private float distance;   // km (소수 1자리)
-        private List<PointDto> points;  // 경로 좌표들 (seq 순)
+        private List<GeneratePointDto> points;  // 경로 좌표들 (seq 순)
 
         @Getter
         @AllArgsConstructor
-        public static class PointDto {
+        public static class GeneratePointDto {
             private int seq;
             private BigDecimal lat;
             private BigDecimal lon;
@@ -101,16 +98,16 @@ public class CourseResponseDto {
         int likeCount;
         int duration;
         float distance;
-        List<PointDto> points;
-        List<FeedbackDto> feedbacks;
-        List<BarrierDto> barriers;
+        List<CourseDetailPointDto> points;
+//        List<FeedbackDto> feedbacks;
+//        List<BarrierDto> barriers;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PointDto {
+    public static class CourseDetailPointDto {
         int seq;
         BigDecimal latitude;
         BigDecimal longitude;
