@@ -118,6 +118,10 @@ public class CourseController {
         return ApiResponse.onSuccess("");
     }
 
+    @Operation(summary = "코스 추천 [v1.0 (2025-10-29)]", description =
+            "# [v1.0 (2025-10-29)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=2645335b207280e0946aff44523816a7&pm=s)" +
+                    " 코스 추천 API 입니다. 시작/종료 지점, 목표 시간, 속도 정보를 입력해주세요."
+    )
     @PostMapping("/generate")
     public ApiResponse<CourseResponseDto.GenerateResultDto> generate(
             @RequestBody CourseRequestDto.GenerateDto request
@@ -127,6 +131,10 @@ public class CourseController {
         return ApiResponse.onSuccess(CourseConverter.toGenerateResultDto(courseList));
     }
 
+    @Operation(summary = "코스 상세 조회 [v1.0 (2025-10-29)]", description =
+            "# [v1.0 (2025-10-29)](https://www.notion.so/API-24b5335b2072801abf1ee6036c06b00e?p=28a5335b2072807b9845d43301808f65&pm=s)" +
+                    " 코스 상세 조회 API 입니다. 조회할 코스의 courseId를 입력해주세요."
+    )
     @GetMapping("/{course_id}")
     public ApiResponse<CourseResponseDto.CourseDetailDto> getCourseDetail(
             @PathVariable("course_id") Long courseId
