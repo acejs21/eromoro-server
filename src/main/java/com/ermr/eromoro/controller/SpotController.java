@@ -25,7 +25,7 @@ public class SpotController {
     )
     @GetMapping("/list")
     public ApiResponse<SpotResponseDto.GetSpotListDto> getSpotList(
-            @RequestParam ContentType category,
+            @RequestParam(required = false) ContentType category,
             @RequestParam(required = false) String siGunGu,
             @RequestParam(required = false) String keyword,
             @RequestParam int pageNum
