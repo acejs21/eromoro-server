@@ -52,7 +52,7 @@ public class CourseController {
                     " 코스 지점 저장 API 입니다. 코스 지점들(리스트)을 저장합니다."
     )
     @PostMapping("/point")
-    public ApiResponse<?> saveCoursePointList(
+    public ApiResponse<CourseResponseDto.saveCoursePointResultDto> saveCoursePointList(
             @RequestParam(required = false) Long spotId,
             @RequestBody CourseRequestDto.CoursePointListDto request
     ){
